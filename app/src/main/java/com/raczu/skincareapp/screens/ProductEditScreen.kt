@@ -72,8 +72,7 @@ fun ProductEditBody(
     ) {
         ProductForm(
             formData = productEditUiState.formData,
-            onValueChange = onValueChange,
-            enabled = true
+            onValueChange = onValueChange
         )
         Button(
             onClick = onUpdate,
