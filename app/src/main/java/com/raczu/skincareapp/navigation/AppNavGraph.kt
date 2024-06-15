@@ -38,7 +38,7 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier)
             )
         }
         composable(
-            route = TopBarScreen.RoutineDetails.route,
+            route = TopBarScreen.RoutineDetails.routeWithArgs,
             arguments = listOf(navArgument(TopBarScreen.RoutineDetails.args) {
                 type = NavType.IntType
             })
@@ -54,7 +54,9 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier)
                 navigateToProductAdd = {
                     navController.navigate(TopBarScreen.ProductAdd.route)
                 },
-                navigateToProductEdit = { }
+                navigateToProductEdit = {
+                    navController.navigate("${TopBarScreen.ProductEdit.route}/$it")
+                }
             )
         }
         composable(route = TopBarScreen.ProductAdd.route) {
@@ -64,7 +66,7 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier)
             )
         }
         composable(
-            route = TopBarScreen.ProductEdit.route,
+            route = TopBarScreen.ProductEdit.routeWithArgs,
             arguments = listOf(navArgument(TopBarScreen.ProductEdit.args) {
                 type = NavType.IntType
             })

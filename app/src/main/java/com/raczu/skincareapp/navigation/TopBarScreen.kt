@@ -6,12 +6,14 @@ sealed class TopBarScreen(
     val args: String = "",
     val title: String
 ) {
+    val routeWithArgs: String
+        get() = if (args.isNotEmpty()) "$route/{$args}" else route
     data object RoutineAdd: TopBarScreen(
         route = "routineAdd",
         title = "Add a new routine",
     )
     data object RoutineDetails: TopBarScreen(
-        route = "routineDetails/{routineId}",
+        route = "routineDetails",
         args = "routineId",
         title = "Routine details"
     )
@@ -20,7 +22,7 @@ sealed class TopBarScreen(
         title = "Add a new product"
     )
     data object ProductEdit: TopBarScreen(
-        route = "productEdit/{productId}",
+        route = "productEdit",
         args = "productId",
         title = "Edit product details"
     )

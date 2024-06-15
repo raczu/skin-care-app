@@ -6,21 +6,25 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.raczu.skincareapp.entities.Product
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProductDao {
     @Insert
-    fun insert(product: Product)
+    suspend fun insert(product: Product)
 
     @Update
-    fun update(product: Product)
+    suspend fun update(product: Product)
 
     @Delete
-    fun delete(product: Product)
+    suspend fun delete(product: Product)
 
     @Query("SELECT * FROM product WHERE product_id = :id")
-    fun getProduct(id: Int): Product
+    fun getProduct(id: Int): Flow<Product?>
 
     @Query("SELECT * FROM product LIMIT :limit OFFSET :offset")
-    fun getProductsWithCursor(limit: Int = 0, offset: Int = 15): List<Product>
+    fun getProductsWithCursor(limit: Int = 0, offset: Int = 15): Flow<List<Product>>
+
+    @Query("SELECT * FROM product")
+    fun getAllProducts(): Flow<List<Product>>
 }

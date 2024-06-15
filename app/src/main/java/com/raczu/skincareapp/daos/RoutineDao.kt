@@ -8,25 +8,29 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.raczu.skincareapp.entities.Routine
 import com.raczu.skincareapp.entities.RoutineWithProducts
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RoutineDao {
     @Insert
-    fun insert(routine: Routine)
+    suspend fun insert(routine: Routine)
 
     @Update
-    fun update(routine: Routine)
+    suspend fun update(routine: Routine)
 
     @Delete
-    fun delete(routine: Routine)
+    suspend fun delete(routine: Routine)
 
     @Transaction
     @Query("SELECT * FROM routine WHERE routine_id = :id")
-    fun getRoutineWithProducts(id: Int): RoutineWithProducts
+    fun getRoutineWithProducts(id: Int): Flow<RoutineWithProducts?>
 
     @Query("SELECT * FROM routine ORDER BY created_at DESC LIMIT :limit OFFSET :offset")
-    fun getRoutinesWithCursor(limit: Int = 15, offset: Int = 0): List<Routine>
+    fun getRoutinesWithCursor(limit: Int = 15, offset: Int = 0): Flow<List<Routine>>
 
     @Query("SELECT * FROM routine WHERE DATE(created_at) = DATE('now')")
-    fun getTodayRoutines(): List<Routine>
+    fun getTodayRoutines(): Flow<List<Routine>>
+
+    @Query("SELECT * FROM routine WHERE DATE(created_at) = DATE(:date)")
+    fun getGivenDateRoutines(date: String): Flow<List<Routine>>
 }

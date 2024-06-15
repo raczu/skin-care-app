@@ -7,18 +7,19 @@ import androidx.room.Query
 import androidx.room.Update
 import com.raczu.skincareapp.entities.RoutineNotification
 import com.raczu.skincareapp.enums.RoutineType
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RoutineNotificationDao {
     @Insert
-    fun insert(notification: RoutineNotification)
+    suspend fun insert(notification: RoutineNotification)
 
     @Update
-    fun update(notification: RoutineNotification)
+    suspend fun update(notification: RoutineNotification)
 
     @Delete
-    fun delete(notification: RoutineNotification)
+    suspend fun delete(notification: RoutineNotification)
 
     @Query("SELECT * FROM routine_notification WHERE type = :type")
-    fun getNotification(type: RoutineType): RoutineNotification
+    fun getNotification(type: RoutineType): Flow<RoutineNotification?>
 }
