@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.raczu.skincareapp.entities.RoutineNotification
 import com.raczu.skincareapp.enums.RoutineType
 import com.raczu.skincareapp.repositories.RoutineNotificationRepository
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 
@@ -25,19 +25,15 @@ class RoutineNotificationViewModel(
 
     init {
         viewModelScope.launch {
-            routineNotificationRepository
-                .getNotification(RoutineType.MORNING).collect {
-                    routineNotificationUiState = routineNotificationUiState.copy(
-                        morningRoutineTime = it?.time
+            combine(
+                routineNotificationRepository.getNotification(RoutineType.MORNING),
+                routineNotificationRepository.getNotification(RoutineType.NIGHT)
+            ) { morningRoutine, nightRoutine ->
+                RoutineNotificationUiState(
+                    morningRoutineTime = morningRoutine?.time,
+                    nightRoutineTime = nightRoutine?.time
                 )
-            }
-
-            routineNotificationRepository
-                .getNotification(RoutineType.NIGHT).collect {
-                    routineNotificationUiState = routineNotificationUiState.copy(
-                        nightRoutineTime = it?.time
-                )
-            }
+            }.collect { routineNotificationUiState = it }
         }
     }
 
