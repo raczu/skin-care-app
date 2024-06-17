@@ -6,14 +6,20 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.rounded.Face
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,6 +37,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.raczu.skincareapp.AppViewModelProvider
 import com.raczu.skincareapp.components.TopBar
 import com.raczu.skincareapp.entities.Product
+import com.raczu.skincareapp.entities.Routine
+import com.raczu.skincareapp.extensions.toHumanReadableString
 import com.raczu.skincareapp.views.RoutineDetailsUiState
 import com.raczu.skincareapp.views.RoutineDetailsViewModel
 
@@ -73,6 +81,10 @@ fun RoutineDetailsBody(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        RoutineDetailsInformationSection(
+            routine = routineDetailsUiState.routine,
+            modifier = Modifier.padding(16.dp)
+        )
         Text(
             text = "Products used in this routine",
             style = MaterialTheme.typography.labelLarge,
@@ -94,6 +106,44 @@ fun RoutineDetailsBody(
             )
         }
     }
+}
+
+@Composable
+fun RoutineDetailsInformationSection(
+    routine: Routine,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = "Routine information",
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(Icons.Default.DateRange, contentDescription = "Date icon")
+            Text(
+                text = routine.createdAt.toHumanReadableString(),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(Icons.Default.Face, contentDescription = "Type icon")
+            Text(
+                text = routine.type.name,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        }
+    }
+
 }
 
 @Composable
