@@ -79,7 +79,9 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier)
             )
         }
         composable(route = BottomBarScreen.Notifications.route) {
-            NotificationsScreen()
+            NotificationsScreen(
+                title = BottomBarScreen.Notifications.title
+            )
         }
     }
 }

@@ -10,6 +10,7 @@ import com.raczu.skincareapp.views.ProductEditViewModel
 import com.raczu.skincareapp.views.ProductsViewModel
 import com.raczu.skincareapp.views.RoutineAddViewModel
 import com.raczu.skincareapp.views.RoutineDetailsViewModel
+import com.raczu.skincareapp.views.RoutineNotificationViewModel
 import com.raczu.skincareapp.views.RoutineViewModel
 
 object AppViewModelProvider {
@@ -50,6 +51,12 @@ object AppViewModelProvider {
             RoutineDetailsViewModel(
                 this.createSavedStateHandle(),
                 skinCareApplication().container.routineRepository
+            )
+        }
+
+        initializer {
+            RoutineNotificationViewModel(
+                skinCareApplication().container.routineNotificationRepository
             )
         }
     }

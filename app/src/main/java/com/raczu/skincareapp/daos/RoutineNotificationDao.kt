@@ -3,6 +3,7 @@ package com.raczu.skincareapp.daos
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.raczu.skincareapp.entities.RoutineNotification
@@ -11,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RoutineNotificationDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(notification: RoutineNotification)
 
     @Update
