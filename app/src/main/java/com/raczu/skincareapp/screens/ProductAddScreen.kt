@@ -80,7 +80,7 @@ fun ProductAddBody(
             onClick = onAdd,
             enabled = productAddUiState.isEntryValid,
             modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.small
+            shape = MaterialTheme.shapes.medium
         ) {
             Text("Add Product")
         }

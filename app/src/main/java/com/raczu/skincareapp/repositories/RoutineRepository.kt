@@ -1,12 +1,18 @@
 package com.raczu.skincareapp.repositories
 
 import com.raczu.skincareapp.daos.RoutineDao
+import com.raczu.skincareapp.entities.Product
 import com.raczu.skincareapp.entities.Routine
+import com.raczu.skincareapp.entities.RoutineProductCrossRef
 import com.raczu.skincareapp.entities.RoutineWithProducts
 import kotlinx.coroutines.flow.Flow
 
 class RoutineRepository(private val routineDao: RoutineDao) {
     suspend fun insert(routine: Routine) = routineDao.insert(routine)
+
+    suspend fun insertWithProducts(routine: Routine, products: List<Product>) {
+        routineDao.insertWithProducts(routine, products)
+    }
 
     suspend fun update(routine: Routine) = routineDao.update(routine)
 
@@ -22,7 +28,7 @@ class RoutineRepository(private val routineDao: RoutineDao) {
 
     fun getTodayRoutines(): Flow<List<Routine>> = routineDao.getTodayRoutines()
 
-    fun getGivenDateRoutines(date: String): Flow<List<Routine>> {
-        return routineDao.getGivenDateRoutines(date)
+    fun getGivenDateRoutines(timestamp: Long): Flow<List<Routine>> {
+        return routineDao.getGivenDateRoutines(timestamp)
     }
 }

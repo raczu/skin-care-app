@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class Product(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo("product_id")
-    val productId: Int,
+    val productId: Int = 0,
     val name: String,
     val description: String? = null,
     val purpose: String? = null,

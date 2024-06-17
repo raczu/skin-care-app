@@ -28,7 +28,9 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier)
                 navigateToRoutineAdd = {
                     navController.navigate(TopBarScreen.RoutineAdd.route)
                 },
-                navigateToRoutineDetails = { }
+                navigateToRoutineDetails = {
+                    navController.navigate("${TopBarScreen.RoutineDetails.route}/$it")
+                }
             )
         }
         composable(route = TopBarScreen.RoutineAdd.route) {

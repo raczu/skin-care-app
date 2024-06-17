@@ -38,7 +38,6 @@ class ProductAddViewModel(private val productRepository: ProductRepository): Vie
 
 fun ProductAddUiState.toEntity(): Product {
     return Product(
-        productId = 0,
         name = formData.name,
         description = formData.description,
         purpose = formData.purpose

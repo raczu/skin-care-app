@@ -78,7 +78,7 @@ fun ProductEditBody(
             onClick = onUpdate,
             enabled = productEditUiState.isEntryValid,
             modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.small
+            shape = MaterialTheme.shapes.medium
         ) {
             Text("Update product")
         }

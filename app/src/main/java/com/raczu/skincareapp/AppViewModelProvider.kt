@@ -8,6 +8,9 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.raczu.skincareapp.views.ProductAddViewModel
 import com.raczu.skincareapp.views.ProductEditViewModel
 import com.raczu.skincareapp.views.ProductsViewModel
+import com.raczu.skincareapp.views.RoutineAddViewModel
+import com.raczu.skincareapp.views.RoutineDetailsViewModel
+import com.raczu.skincareapp.views.RoutineViewModel
 
 object AppViewModelProvider {
     val factory = viewModelFactory {
@@ -27,6 +30,26 @@ object AppViewModelProvider {
             ProductEditViewModel(
                 this.createSavedStateHandle(),
                 skinCareApplication().container.productRepository
+            )
+        }
+
+        initializer {
+            RoutineAddViewModel(
+                skinCareApplication().container.routineRepository,
+                skinCareApplication().container.productRepository
+            )
+        }
+
+        initializer {
+            RoutineViewModel(
+                skinCareApplication().container.routineRepository
+            )
+        }
+
+        initializer {
+            RoutineDetailsViewModel(
+                this.createSavedStateHandle(),
+                skinCareApplication().container.routineRepository
             )
         }
     }

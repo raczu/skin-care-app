@@ -6,12 +6,12 @@ import androidx.room.TypeConverters
 import com.raczu.skincareapp.converters.DateConverter
 import com.raczu.skincareapp.converters.RoutineTypeConverter
 import com.raczu.skincareapp.enums.RoutineType
-import java.util.Date
+import java.time.Instant
 
 @Entity(tableName = "routine_notification")
 @TypeConverters(RoutineTypeConverter::class, DateConverter::class)
 data class RoutineNotification(
     @PrimaryKey
     val type: RoutineType,
-    val time: Date? = null,
+    val time: Instant? = null,
 )

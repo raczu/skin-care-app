@@ -10,7 +10,7 @@ sealed class TopBarScreen(
         get() = if (args.isNotEmpty()) "$route/{$args}" else route
     data object RoutineAdd: TopBarScreen(
         route = "routineAdd",
-        title = "Note down a new routine",
+        title = "Note a new routine for today"
     )
     data object RoutineDetails: TopBarScreen(
         route = "routineDetails",

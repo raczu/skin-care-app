@@ -2,7 +2,6 @@ package com.raczu.skincareapp.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -172,23 +171,24 @@ fun ProductListItem(
     val isExpanded = remember { mutableStateOf(false) }
 
     Card(
-        modifier = modifier.clickable { isExpanded.value = !isExpanded.value },
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primaryContainer),
+        modifier = modifier
+            .clickable { isExpanded.value = !isExpanded.value },
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
                         text = product.name,
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleMedium
                     )
                     Text(
                         text = product.purpose ?: "",
-                        style = MaterialTheme.typography.labelLarge,
+                        style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.outline
                     )
                 }
@@ -207,7 +207,7 @@ fun ProductListItem(
             ) {
                 Text(
                     text = product.description ?: "",
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
                         .animateContentSize()
                         .padding(top = 8.dp)
