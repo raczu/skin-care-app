@@ -1,3 +1,4 @@
+import secrets
 from typing import Literal
 
 from pydantic import PostgresDsn, ValidationInfo, field_validator
@@ -7,6 +8,12 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     API_PATH: str = "/api/v1"
     ENVIRONMENT: Literal["development", "production"] = "development"
+
+    JWT_ALGORITHM: Literal["HS256", "RS256"] = "HS256"
+    ACCESS_TOKEN_SECRET_KEY: str = secrets.token_urlsafe(32)
+    REFRESH_TOKEN_SECRET_KEY: str = secrets.token_urlsafe(32)
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
