@@ -72,7 +72,7 @@ ParseJWTRefreshTokenDep = Annotated[TokenPayload, Depends(parse_jwt_refresh_toke
 
 
 async def get_current_user(session: SessionDep, payload: ParseJWTTokenDep) -> User:
-    user = await session.get(User, uuid.UUID(payload.sub))
+    user: User | None = await session.get(User, uuid.UUID(payload.sub))
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

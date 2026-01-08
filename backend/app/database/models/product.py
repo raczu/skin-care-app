@@ -9,12 +9,12 @@ from app.database.models.base import Base
 
 
 class Product(Base):
-    __tablename__ = "products"
+    __tablename__ = "product"
 
-    product_id: Mapped[uuid.UUID] = mapped_column(
+    id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4()
     )
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.user_id"))
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     brand: Mapped[str] = mapped_column(String(100), nullable=True)
     purpose: Mapped[str] = mapped_column(String(500), nullable=True)

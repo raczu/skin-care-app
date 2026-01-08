@@ -2,7 +2,7 @@ import re
 import uuid
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
 
 PASSWORD_RE = re.compile(r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")
 
@@ -38,7 +38,7 @@ class UserUpdate(BaseModel):
 class UserInDB(UserBase):
     model_config = ConfigDict(from_attributes=True)
 
-    id: uuid.UUID = Field(alias="user_id")
+    id: uuid.UUID
     created_at: datetime
 
 

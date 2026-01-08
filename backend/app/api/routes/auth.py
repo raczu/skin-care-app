@@ -25,12 +25,12 @@ async def get_access_token(
         )
     fullname = f"{user.name} {user.surname}"
     access_token = create_access_token(
-        subject=str(user.user_id),
+        subject=str(user.id),
         name=fullname,
         delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
     )
     refresh_token = create_refresh_token(
-        subject=str(user.user_id),
+        subject=str(user.id),
         name=fullname,
         delta=timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS),
     )
