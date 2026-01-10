@@ -15,6 +15,21 @@ services:
     env_file:
       - ".env"
 
+  backend:
+    image: skin-care-app:0.1
+    build:
+      context: ./backend
+    networks:
+        - skin-care-app-network
+    ports:
+        - "${SKIN_CARE_APP_BACKEND_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+        restart: true
+    env_file:
+      - ".env"
+
 volumes:
   postgres-data:
 
