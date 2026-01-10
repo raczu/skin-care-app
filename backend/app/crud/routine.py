@@ -62,10 +62,9 @@ async def create_routine(
 async def update_routine(
     session: AsyncSession, routine: Routine, routine_in: RoutineUpdatePartial
 ) -> Routine:
-    routine.type = routine_in.type or routine.type
-    routine.notes = routine_in.notes or routine.notes
-    routine.performed_at = routine_in.performed_at or routine.performed_at
-
+    data = routine_in.model_dump(exclude_unset=True)
+    for field, value in data.items():
+        setattr(routine, field, value)
     if routine_in.product_ids:
         products = await get_user_products_by_ids(session, routine.user_id, routine_in.product_ids)
         routine.products = products

@@ -33,9 +33,9 @@ async def create_user(session: AsyncSession, user_in: UserCreate) -> User:
 
 
 async def update_user(session: AsyncSession, user: User, user_in: UserUpdatePartial) -> User:
-    user.email = user_in.email or user.email
-    user.name = user_in.name or user.name
-    user.surname = user_in.surname or user.surname
+    data = user_in.model_dump(exclude_unset=True)
+    for field, value in data.items():
+        setattr(user, field, value)
     await session.flush()
     await session.refresh(user)
     return user
