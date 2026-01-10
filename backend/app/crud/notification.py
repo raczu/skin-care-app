@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.models import NotificationRule
-from app.schemas import NotificationRuleCreate, NotificationRuleUpdate
+from app.schemas import NotificationRuleCreate, NotificationRuleUpdatePartial
 
 
 async def get_user_notification_rules(
@@ -41,7 +41,7 @@ async def create_notification_rule(
 
 
 async def update_notification_rule(
-    session: AsyncSession, rule: NotificationRule, rule_in: NotificationRuleUpdate
+    session: AsyncSession, rule: NotificationRule, rule_in: NotificationRuleUpdatePartial
 ) -> NotificationRule:
     rule.time_of_day = rule_in.time_of_day
     rule.frequency = rule_in.frequency

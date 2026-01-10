@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.database.models.routine import RoutineType
 from app.schemas.common import PaginationParams
-from app.schemas.product import Product
+from app.schemas.product import ProductRead
 
 
 class RoutineParams(PaginationParams):
@@ -41,7 +41,7 @@ class RoutineCreate(RoutineBase):
         return self
 
 
-class RoutineUpdate(RoutineBase):
+class RoutineUpdatePartial(RoutineBase):
     type: RoutineType | None = None
     product_ids: list[uuid.UUID] | None = None
     performed_at: datetime | None = None
@@ -54,7 +54,7 @@ class RoutineInDB(RoutineBase):
     user_id: uuid.UUID
     created_at: datetime
     updated_at: datetime
-    products: list[Product]
+    products: list[ProductRead]
 
 
-class Routine(RoutineInDB): ...
+class RoutineRead(RoutineInDB): ...

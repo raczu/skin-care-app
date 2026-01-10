@@ -6,7 +6,14 @@ from fastapi import APIRouter, Query, Response, status
 from app import crud
 from app.api.deps import CurrentUserDep, SessionDep
 from app.api.utils import get_owned_resource_or_404, paginate
-from app.schemas import PaginatedResponse, PaginationParams, Product, ProductCreate, ProductUpdate
+from app.database.models import Product
+from app.schemas import (
+    PaginatedResponse,
+    PaginationParams,
+    ProductCreate,
+    ProductRead,
+    ProductUpdatePartial,
+)
 
 router = APIRouter(prefix="/products", tags=["products"])
 
@@ -17,7 +24,7 @@ PRODUCT_NOT_FOUND_MESSAGE = "Product not found or you don't have access to it"
     "/",
     summary="Create a new skin care product in the user's inventory",
     status_code=status.HTTP_201_CREATED,
-    response_model=Product,
+    response_model=ProductRead,
 )
 async def create_product(
     *, product_in: ProductCreate, session: SessionDep, user: CurrentUserDep
@@ -29,19 +36,19 @@ async def create_product(
 @router.get(
     "/",
     summary="Get all skin care products in the user's inventory",
-    response_model=PaginatedResponse[Product],
+    response_model=PaginatedResponse[ProductRead],
 )
 async def get_products(
     params: Annotated[PaginationParams, Query()],
     *,
     session: SessionDep,
     user: CurrentUserDep,
-) -> PaginatedResponse[Product]:
+) -> PaginatedResponse[ProductRead]:
     products, total = await crud.product.get_user_products(session, user.id, params)
     return paginate(items=products, total=total, limit=params.limit, offset=params.offset)
 
 
-@router.get("/{id}", summary="Get a specific skin care product", response_model=Product)
+@router.get("/{id}", summary="Get a specific skin care product", response_model=ProductRead)
 async def get_product_by_id(id: uuid.UUID, *, session: SessionDep, user: CurrentUserDep) -> Product:
     product = await get_owned_resource_or_404(
         session=session,
@@ -53,9 +60,9 @@ async def get_product_by_id(id: uuid.UUID, *, session: SessionDep, user: Current
     return product
 
 
-@router.patch("/{id}", summary="Update a specific skin care product", response_model=Product)
+@router.patch("/{id}", summary="Update a specific skin care product", response_model=ProductRead)
 async def update_product(
-    id: uuid.UUID, *, product_in: ProductUpdate, session: SessionDep, user: CurrentUserDep
+    id: uuid.UUID, *, product_in: ProductUpdatePartial, session: SessionDep, user: CurrentUserDep
 ) -> Product:
     product = await get_owned_resource_or_404(
         session=session,

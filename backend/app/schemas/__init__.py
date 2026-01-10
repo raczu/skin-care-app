@@ -4,46 +4,46 @@ from app.schemas.common import (
     PaginationMeta,
     PaginationParams,
 )
-from app.schemas.device import UserDevice, UserDeviceCreate
+from app.schemas.device import UserDeviceCreate, UserDeviceRead
 from app.schemas.notification import (
     CustomRule,
     CustomVariant,
     EveryNDaysRule,
     EveryNDaysVariant,
-    NotificationRule,
     NotificationRuleCreate,
-    NotificationRuleUpdate,
+    NotificationRuleRead,
+    NotificationRuleUpdatePartial,
     SimpleRule,
     SimpleVariant,
 )
-from app.schemas.product import Product, ProductCreate, ProductUpdate
-from app.schemas.routine import Routine, RoutineCreate, RoutineParams, RoutineUpdate
+from app.schemas.product import ProductCreate, ProductRead, ProductUpdatePartial
+from app.schemas.routine import RoutineCreate, RoutineParams, RoutineRead, RoutineUpdatePartial
 from app.schemas.token import RefreshToken, Token, TokenPayload
-from app.schemas.user import User, UserCreate, UserUpdate
+from app.schemas.user import UserCreate, UserRead, UserUpdatePartial
 
 __all__ = [
-    "User",
+    "UserRead",
     "UserCreate",
-    "UserUpdate",
+    "UserUpdatePartial",
     "Token",
     "TokenPayload",
     "RefreshToken",
-    "UserDevice",
+    "UserDeviceRead",
     "UserDeviceCreate",
     "PaginatedResponse",
     "PaginationParams",
     "GenericMultipleItems",
     "PaginationMeta",
-    "Product",
+    "ProductRead",
     "ProductCreate",
-    "ProductUpdate",
-    "Routine",
+    "ProductUpdatePartial",
+    "RoutineRead",
     "RoutineCreate",
-    "RoutineUpdate",
+    "RoutineUpdatePartial",
     "RoutineParams",
     "NotificationRuleCreate",
-    "NotificationRule",
-    "NotificationRuleUpdate",
+    "NotificationRuleRead",
+    "NotificationRuleUpdatePartial",
     "CustomRule",
     "SimpleRule",
     "EveryNDaysRule",

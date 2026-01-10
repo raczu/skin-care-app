@@ -6,7 +6,14 @@ from fastapi import APIRouter, HTTPException, Query, Response, status
 from app import crud
 from app.api.deps import CurrentUserDep, SessionDep
 from app.api.utils import get_owned_resource_or_404, paginate
-from app.schemas import PaginatedResponse, Routine, RoutineCreate, RoutineParams, RoutineUpdate
+from app.database.models import Routine
+from app.schemas import (
+    PaginatedResponse,
+    RoutineCreate,
+    RoutineParams,
+    RoutineRead,
+    RoutineUpdatePartial,
+)
 
 router = APIRouter(prefix="/routines", tags=["routines"])
 
@@ -17,7 +24,7 @@ ROUTINE_NOT_FOUND_MESSAGE = "Routine not found or you don't have access to it"
     "/",
     summary="Create a new performed routine entry for the current user",
     status_code=status.HTTP_201_CREATED,
-    response_model=Routine,
+    response_model=RoutineRead,
 )
 async def create_routine(
     *, routine_in: RoutineCreate, session: SessionDep, user: CurrentUserDep
@@ -35,12 +42,12 @@ async def create_routine(
 @router.get("/", summary="Get all performed routine entries for the current user")
 async def get_routines(
     params: Annotated[RoutineParams, Query()], *, session: SessionDep, user: CurrentUserDep
-) -> PaginatedResponse[Routine]:
+) -> PaginatedResponse[RoutineRead]:
     routines, total = await crud.routine.get_user_routines(session, user.id, params)
     return paginate(items=routines, total=total, limit=params.limit, offset=params.offset)
 
 
-@router.get("/{id}", summary="Get a specific performed routine entry", response_model=Routine)
+@router.get("/{id}", summary="Get a specific performed routine entry", response_model=RoutineRead)
 async def get_routine_by_id(id: uuid.UUID, *, session: SessionDep, user: CurrentUserDep) -> Routine:
     routine = await get_owned_resource_or_404(
         session=session,
@@ -52,9 +59,11 @@ async def get_routine_by_id(id: uuid.UUID, *, session: SessionDep, user: Current
     return routine
 
 
-@router.patch("/{id}", summary="Update a specific performed routine entry", response_model=Routine)
+@router.patch(
+    "/{id}", summary="Update a specific performed routine entry", response_model=RoutineRead
+)
 async def update_routine_by_id(
-    id: uuid.UUID, *, routine_in: RoutineUpdate, session: SessionDep, user: CurrentUserDep
+    id: uuid.UUID, *, routine_in: RoutineUpdatePartial, session: SessionDep, user: CurrentUserDep
 ) -> Routine:
     if routine_in.product_ids is not None:
         products = await crud.product.get_user_products_by_ids(

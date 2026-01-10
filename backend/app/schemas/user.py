@@ -29,7 +29,7 @@ class UserCreate(UserBase):
         return v
 
 
-class UserUpdate(BaseModel):
+class UserUpdatePartial(BaseModel):
     email: EmailStr | None = None
     name: str | None = None
     surname: str | None = None
@@ -42,4 +42,4 @@ class UserInDB(UserBase):
     created_at: datetime
 
 
-class User(UserInDB): ...
+class UserRead(UserInDB): ...

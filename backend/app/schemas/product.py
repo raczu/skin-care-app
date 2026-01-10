@@ -14,7 +14,7 @@ class ProductBase(BaseModel):
 class ProductCreate(ProductBase): ...
 
 
-class ProductUpdate(ProductBase):
+class ProductUpdatePartial(ProductBase):
     name: str | None = Field(None, max_length=255)
 
 
@@ -27,4 +27,4 @@ class ProductInDB(ProductBase):
     updated_at: datetime
 
 
-class Product(ProductInDB): ...
+class ProductRead(ProductInDB): ...

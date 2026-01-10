@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 from app.crud.product import get_user_products_by_ids
 from app.crud.utils import get_paginated_resources
 from app.database.models import Routine
-from app.schemas import RoutineCreate, RoutineParams, RoutineUpdate
+from app.schemas import RoutineCreate, RoutineParams, RoutineUpdatePartial
 
 
 async def get_user_routines(
@@ -60,7 +60,7 @@ async def create_routine(
 
 
 async def update_routine(
-    session: AsyncSession, routine: Routine, routine_in: RoutineUpdate
+    session: AsyncSession, routine: Routine, routine_in: RoutineUpdatePartial
 ) -> Routine:
     routine.type = routine_in.type or routine.type
     routine.notes = routine_in.notes or routine.notes

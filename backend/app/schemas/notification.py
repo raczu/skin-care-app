@@ -60,7 +60,7 @@ NotificationRuleCreate = Annotated[
 ]
 
 
-class NotificationRuleUpdate(BaseModel):
+class NotificationRuleUpdatePartial(BaseModel):
     time_of_day: time | None = None
     frequency: NotificationFrequency | None = None
     every_n: int | None = None
@@ -100,6 +100,6 @@ class CustomRule(CustomVariant, NotificationRuleInDB): ...
 class SimpleRule(SimpleVariant, NotificationRuleInDB): ...
 
 
-NotificationRule = Annotated[
+NotificationRuleRead = Annotated[
     EveryNDaysRule | CustomRule | SimpleRule, Field(discriminator="frequency")
 ]

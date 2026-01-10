@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core import get_password_hash, verify_password
 from app.database.models import User
-from app.schemas import UserCreate, UserUpdate
+from app.schemas import UserCreate, UserUpdatePartial
 
 
 async def get_user_by_id(session: AsyncSession, id: uuid.UUID) -> User | None:
@@ -32,7 +32,7 @@ async def create_user(session: AsyncSession, user_in: UserCreate) -> User:
     return user
 
 
-async def update_user(session: AsyncSession, user: User, user_in: UserUpdate) -> User:
+async def update_user(session: AsyncSession, user: User, user_in: UserUpdatePartial) -> User:
     user.email = user_in.email or user.email
     user.name = user_in.name or user.name
     user.surname = user_in.surname or user.surname

@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.utils import get_paginated_resources
 from app.database.models import Product
-from app.schemas import PaginationParams, ProductCreate, ProductUpdate
+from app.schemas import PaginationParams, ProductCreate, ProductUpdatePartial
 
 
 async def get_user_products(
@@ -61,7 +61,7 @@ async def create_product(
 
 
 async def update_product(
-    session: AsyncSession, product: Product, product_in: ProductUpdate
+    session: AsyncSession, product: Product, product_in: ProductUpdatePartial
 ) -> Product:
     product.name = product_in.name or product.name
     product.brand = product_in.brand or product.brand
