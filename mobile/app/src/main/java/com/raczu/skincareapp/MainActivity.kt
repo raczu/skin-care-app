@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.raczu.skincareapp.screens.MainScreen
+import com.raczu.skincareapp.ui.MainScreen
 import com.raczu.skincareapp.ui.theme.SkinCareAppTheme
 
 class MainActivity : ComponentActivity() {
