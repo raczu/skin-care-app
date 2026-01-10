@@ -1,5 +1,3 @@
-from typing import Any
-
 from fastapi import APIRouter, status
 
 from app import crud
@@ -27,6 +25,8 @@ async def register_device(
     summary="Get registered device information for the current user",
     response_model=GenericMultipleItems[UserDevice],
 )
-async def get_device_info_me(session: SessionDep, user: CurrentUserDep) -> dict[str, Any]:
+async def get_devices(
+    session: SessionDep, user: CurrentUserDep
+) -> GenericMultipleItems[UserDevice]:
     devices = await crud.device.get_user_devices(session, user.id)
-    return {"items": devices}
+    return GenericMultipleItems[UserDevice](items=devices)

@@ -21,9 +21,7 @@ class NotificationFrequency(StrEnum):
 class NotificationRule(Base):
     __tablename__ = "notification_rule"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
     time_of_day: Mapped[time] = mapped_column(Time(timezone=True), nullable=False)
     frequency: Mapped[NotificationFrequency] = mapped_column(String(20), nullable=False)
@@ -46,9 +44,7 @@ class NotificationStatus(StrEnum):
 class ScheduledNotification(Base):
     __tablename__ = "scheduled_notification"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     notification_rule_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("notification_rule.id"))
     scheduled_for: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     sent_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)

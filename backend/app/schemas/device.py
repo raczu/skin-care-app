@@ -1,11 +1,11 @@
 import uuid
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class UserDeviceBase(BaseModel):
-    meta: str
+    meta: str = Field(..., description="Device metadata in 'key1=value1;key2=value2;...' format")
 
     @field_validator("meta", mode="after")
     @classmethod

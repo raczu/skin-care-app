@@ -23,12 +23,12 @@ async def get_user_me(user: CurrentUserDep) -> User:
     return user
 
 
-@router.put("/me", summary="Update current user information", response_model=User)
+@router.patch("/me", summary="Update current user information", response_model=User)
 async def update_user_me(*, user_in: UserUpdate, session: SessionDep, user: CurrentUserDep) -> User:
     user = await crud.user.update_user(session, user, user_in)
     return user
 
 
 @router.get("/me/stats", summary="Get current user statistics related to skin care activities")
-async def get_user_stats_me(session: SessionDep) -> Response:
+async def get_user_stats_me(session: SessionDep, user: CurrentUserDep) -> Response:
     raise NotImplementedError

@@ -30,9 +30,9 @@ class UserCreate(UserBase):
 
 
 class UserUpdate(BaseModel):
-    email: str
-    name: str
-    surname: str
+    email: EmailStr | None = None
+    name: str | None = None
+    surname: str | None = None
 
 
 class UserInDB(UserBase):

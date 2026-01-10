@@ -19,11 +19,8 @@ class RoutineType(StrEnum):
 class Routine(Base):
     __tablename__ = "routine"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
-    name: Mapped[str] = mapped_column(String(255), nullable=False)
     type: Mapped[RoutineType] = mapped_column(String(20), nullable=False)
     notes: Mapped[str]
     performed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
@@ -32,7 +29,9 @@ class Routine(Base):
         DateTime(timezone=True), default=datetime.now, onupdate=datetime.now
     )
 
-    products: Mapped[list["Product"]] = relationship(secondary="routine_product", lazy="joined")
+    products: Mapped[list["Product"]] = relationship(  # noqa: F821
+        "Product", secondary="routine_product", lazy="joined"
+    )
 
 
 class RoutineProduct(Base):
@@ -41,5 +40,5 @@ class RoutineProduct(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4()
     )
-    routine_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("routine.id"))
-    product_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("product.id"))
+    routine_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("routine.id", ondelete="CASCADE"))
+    product_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("product.id", ondelete="CASCADE"))
