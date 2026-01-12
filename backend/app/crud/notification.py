@@ -1,8 +1,10 @@
 import uuid
 
+from pydantic import TypeAdapter, ValidationError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.exceptions import RequirementMismatchError
 from app.database.models import NotificationRule
 from app.schemas import NotificationRuleCreate, NotificationRuleUpdatePartial
 
@@ -43,15 +45,23 @@ async def create_notification_rule(
 async def update_notification_rule(
     session: AsyncSession, rule: NotificationRule, rule_in: NotificationRuleUpdatePartial
 ) -> NotificationRule:
-    rule.time_of_day = rule_in.time_of_day
-    rule.frequency = rule_in.frequency
-    rule.every_n = rule_in.every_n
-    rule.weekdays = rule_in.weekdays
-    rule.enabled = rule_in.enabled
+    """Update a notification rule and validate requirements.
 
-    # TODO: Revalidate fields against rules requirements (EveryNDaysVariant, etc.)
+    Raises:
+        RequirementMismatchError: If the updated notification rule does not meet the requirements
+            of any notification rule variant.
+    """
+    data = rule_in.model_dump(exclude_unset=True)
+    for field, value in data.items():
+        setattr(rule, field, value)
 
-    session.add(rule)
+    # After entity update, validate against NotificationRuleCreate to check
+    # whether it still meets any variants' requirements.
+    try:
+        _ = TypeAdapter(NotificationRuleCreate).validate_python(rule, from_attributes=True)
+    except ValidationError as exc:
+        raise RequirementMismatchError(errors=exc.errors()) from exc
+
     await session.flush()
     await session.refresh(rule)
     return rule

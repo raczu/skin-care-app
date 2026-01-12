@@ -63,10 +63,9 @@ async def create_product(
 async def update_product(
     session: AsyncSession, product: Product, product_in: ProductUpdatePartial
 ) -> Product:
-    product.name = product_in.name or product.name
-    product.brand = product_in.brand or product.brand
-    product.purpose = product_in.purpose or product.purpose
-    product.description = product_in.description or product.description
+    data = product_in.model_dump(exclude_unset=True)
+    for field, value in data.items():
+        setattr(product, field, value)
     await session.flush()
     await session.refresh(product)
     return product

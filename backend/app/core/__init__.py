@@ -1,3 +1,4 @@
+from app.core import exceptions
 from app.core.security import (
     create_access_token,
     create_refresh_token,
@@ -12,4 +13,5 @@ __all__ = [
     "verify_password",
     "create_access_token",
     "create_refresh_token",
+    "exceptions",
 ]
