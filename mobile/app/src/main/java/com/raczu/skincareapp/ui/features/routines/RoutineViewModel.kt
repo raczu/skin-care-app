@@ -3,7 +3,7 @@ package com.raczu.skincareapp.ui.features.routines
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.raczu.skincareapp.data.local.entities.Routine
-import com.raczu.skincareapp.data.repositories.RoutineRepository
+import com.raczu.skincareapp.data.repository.RoutineRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

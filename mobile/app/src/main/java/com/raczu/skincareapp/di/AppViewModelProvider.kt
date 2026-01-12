@@ -6,6 +6,9 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.raczu.skincareapp.SkinCareApplication
+import com.raczu.skincareapp.ui.features.auth.LoginViewModel
+import com.raczu.skincareapp.ui.features.auth.RegisterViewModel
+import com.raczu.skincareapp.ui.features.main.MainViewModel
 import com.raczu.skincareapp.ui.features.products.ProductAddViewModel
 import com.raczu.skincareapp.ui.features.products.ProductEditViewModel
 import com.raczu.skincareapp.ui.features.products.ProductsViewModel
@@ -13,9 +16,28 @@ import com.raczu.skincareapp.ui.features.routines.RoutineAddViewModel
 import com.raczu.skincareapp.ui.features.routines.RoutineDetailsViewModel
 import com.raczu.skincareapp.ui.features.notifications.RoutineNotificationViewModel
 import com.raczu.skincareapp.ui.features.routines.RoutineViewModel
+import com.raczu.skincareapp.ui.features.user.UserProfileViewModel
 
 object AppViewModelProvider {
     val factory = viewModelFactory {
+        initializer {
+            MainViewModel(
+                skinCareApplication().container.tokenManager
+            )
+        }
+
+        initializer {
+            LoginViewModel(
+                skinCareApplication().container.authRepository
+            )
+        }
+
+        initializer {
+            RegisterViewModel(
+                skinCareApplication().container.userRepository
+            )
+        }
+
         initializer {
             ProductAddViewModel(
                 skinCareApplication().container.productRepository
@@ -58,6 +80,13 @@ object AppViewModelProvider {
         initializer {
             RoutineNotificationViewModel(
                 skinCareApplication().container.routineNotificationRepository
+            )
+        }
+
+        initializer {
+            UserProfileViewModel(
+                skinCareApplication().container.userRepository,
+                skinCareApplication().container.tokenManager
             )
         }
     }

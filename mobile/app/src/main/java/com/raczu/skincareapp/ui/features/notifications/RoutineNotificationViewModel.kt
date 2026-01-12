@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.raczu.skincareapp.data.local.entities.RoutineNotification
 import com.raczu.skincareapp.utils.enums.RoutineType
-import com.raczu.skincareapp.data.repositories.RoutineNotificationRepository
+import com.raczu.skincareapp.data.repository.RoutineNotificationRepository
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import java.time.LocalTime

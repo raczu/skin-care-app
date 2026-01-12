@@ -17,8 +17,8 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.raczu.skincareapp.di.AppViewModelProvider
-import com.raczu.skincareapp.ui.components.ProductForm
-import com.raczu.skincareapp.ui.components.ProductFormData
+import com.raczu.skincareapp.ui.features.products.components.ProductForm
+import com.raczu.skincareapp.ui.features.products.components.ProductFormData
 import com.raczu.skincareapp.ui.components.TopBar
 
 @OptIn(ExperimentalMaterial3Api::class)

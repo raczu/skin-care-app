@@ -11,7 +11,7 @@ import com.raczu.skincareapp.data.local.entities.Routine
 import com.raczu.skincareapp.data.local.entities.RoutineWithProducts
 import com.raczu.skincareapp.utils.enums.RoutineType
 import com.raczu.skincareapp.ui.navigation.TopBarScreen
-import com.raczu.skincareapp.data.repositories.RoutineRepository
+import com.raczu.skincareapp.data.repository.RoutineRepository
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch

@@ -3,7 +3,7 @@ package com.raczu.skincareapp.ui.features.products
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.raczu.skincareapp.data.local.entities.Product
-import com.raczu.skincareapp.data.repositories.ProductRepository
+import com.raczu.skincareapp.data.repository.ProductRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map

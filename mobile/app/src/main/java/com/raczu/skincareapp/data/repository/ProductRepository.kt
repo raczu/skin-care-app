@@ -1,4 +1,4 @@
-package com.raczu.skincareapp.data.repositories
+package com.raczu.skincareapp.data.repository
 
 import com.raczu.skincareapp.data.local.daos.ProductDao
 import com.raczu.skincareapp.data.local.entities.Product

@@ -1,4 +1,4 @@
-package com.raczu.skincareapp.ui.components
+package com.raczu.skincareapp.ui.features.products.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

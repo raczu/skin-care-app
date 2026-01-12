@@ -7,6 +7,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.raczu.skincareapp.ui.features.auth.LoginScreen
+import com.raczu.skincareapp.ui.features.auth.RegisterScreen
 import com.raczu.skincareapp.ui.features.notifications.NotificationsScreen
 import com.raczu.skincareapp.ui.features.products.ProductAddScreen
 import com.raczu.skincareapp.ui.features.products.ProductEditScreen
@@ -14,14 +16,43 @@ import com.raczu.skincareapp.ui.features.products.ProductsScreen
 import com.raczu.skincareapp.ui.features.routines.RoutineAddScreen
 import com.raczu.skincareapp.ui.features.routines.RoutineDetailsScreen
 import com.raczu.skincareapp.ui.features.routines.RoutineScreen
+import com.raczu.skincareapp.ui.features.user.ProfileScreen
 
 @Composable
-fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
+fun AppNavGraph(
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
+    startDestination: String = AuthScreen.Login.route
+) {
     NavHost(
         navController = navController,
-        startDestination = BottomBarScreen.Routine.route,
+        startDestination = startDestination,
         modifier = modifier
     ) {
+        composable(route = AuthScreen.Login.route) {
+            LoginScreen(
+                onLoginSuccess = {
+                    navController.navigate(BottomBarScreen.Routine.route) {
+                        popUpTo(AuthScreen.Login.route) { inclusive = true }
+                    }
+                },
+                onNavigateToRegister = {
+                    navController.navigate(AuthScreen.Register.route)
+                }
+            )
+        }
+        composable(route = AuthScreen.Register.route) {
+            RegisterScreen(
+                onRegisterSuccess = {
+                    navController.navigate(BottomBarScreen.Routine.route) {
+                        popUpTo(AuthScreen.Register.route) { inclusive = true }
+                    }
+                },
+                onNavigateToLogin = {
+                    navController.navigate(AuthScreen.Login.route)
+                }
+            )
+        }
         composable(route = BottomBarScreen.Routine.route) {
             RoutineScreen(
                 title = BottomBarScreen.Routine.title,
@@ -81,6 +112,12 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier)
         composable(route = BottomBarScreen.Notifications.route) {
             NotificationsScreen(
                 title = BottomBarScreen.Notifications.title
+            )
+        }
+        composable(route = BottomBarScreen.UserProfile.route) {
+            ProfileScreen(
+                title = BottomBarScreen.UserProfile.title,
+                onNavigateToUserUpdate = { }
             )
         }
     }

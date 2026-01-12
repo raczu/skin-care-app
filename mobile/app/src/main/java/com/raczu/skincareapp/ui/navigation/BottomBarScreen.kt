@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class BottomBarScreen(
@@ -25,5 +26,10 @@ sealed class BottomBarScreen(
         route = "notifications",
         title = "Notifications",
         icon = Icons.Default.Notifications
+    )
+    data object UserProfile: BottomBarScreen(
+        route="profile",
+        title="My Profile",
+        icon=Icons.Default.Person
     )
 }
