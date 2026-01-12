@@ -15,8 +15,9 @@ import com.raczu.skincareapp.ui.features.products.ProductsViewModel
 import com.raczu.skincareapp.ui.features.routines.RoutineAddViewModel
 import com.raczu.skincareapp.ui.features.routines.RoutineDetailsViewModel
 import com.raczu.skincareapp.ui.features.notifications.RoutineNotificationViewModel
+import com.raczu.skincareapp.ui.features.profile.EditProfileViewModel
 import com.raczu.skincareapp.ui.features.routines.RoutineViewModel
-import com.raczu.skincareapp.ui.features.user.UserProfileViewModel
+import com.raczu.skincareapp.ui.features.profile.ProfileViewModel
 
 object AppViewModelProvider {
     val factory = viewModelFactory {
@@ -84,9 +85,15 @@ object AppViewModelProvider {
         }
 
         initializer {
-            UserProfileViewModel(
+            ProfileViewModel(
                 skinCareApplication().container.userRepository,
                 skinCareApplication().container.tokenManager
+            )
+        }
+
+        initializer {
+            EditProfileViewModel(
+                skinCareApplication().container.userRepository
             )
         }
     }

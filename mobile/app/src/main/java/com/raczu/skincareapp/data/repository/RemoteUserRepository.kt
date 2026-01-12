@@ -7,10 +7,16 @@ import com.raczu.skincareapp.data.remote.api.UserApiService
 import com.raczu.skincareapp.data.remote.api.safeApiCall
 import com.raczu.skincareapp.data.remote.dto.user.RegisterRequest
 import com.raczu.skincareapp.data.remote.dto.user.UserUpdateRequest
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class RemoteUserRepository(
     private val userApiService: UserApiService
-) : UserRepository {
+) : UserRepository, CleanableRepository {
+    private val _user = MutableStateFlow<User?>(null)
+    override val user: StateFlow<User?> = _user.asStateFlow()
+
     override suspend fun register(user: UserRegistration): Result<User> {
         val request = RegisterRequest(
             email = user.email,
@@ -36,13 +42,15 @@ class RemoteUserRepository(
         val result = safeApiCall { userApiService.getUserProfile() }
 
         return result.map { response ->
-            User(
+            val domainUser = User(
                 id = response.id,
                 email = response.email,
                 name = response.name,
                 surname = response.surname,
                 username = response.username
             )
+            _user.value = domainUser
+            domainUser
         }
     }
 
@@ -55,13 +63,19 @@ class RemoteUserRepository(
         val result = safeApiCall { userApiService.updateUser(request) }
 
         return result.map { response ->
-            User(
+            val domainUser = User(
                 id = response.id,
                 email = response.email,
                 name = response.name,
                 surname = response.surname,
                 username = response.username
             )
+            _user.value = domainUser
+            domainUser
         }
+    }
+
+    override fun clearData() {
+        _user.value = null
     }
 }

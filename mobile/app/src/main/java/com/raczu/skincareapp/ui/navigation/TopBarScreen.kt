@@ -26,4 +26,8 @@ sealed class TopBarScreen(
         args = "productId",
         title = "Edit product details"
     )
+    data object EditProfile: TopBarScreen(
+        route = "editProfile",
+        title = "Edit Profile"
+    )
 }

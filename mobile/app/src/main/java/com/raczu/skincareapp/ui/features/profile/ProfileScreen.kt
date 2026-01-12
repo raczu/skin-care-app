@@ -1,4 +1,4 @@
-package com.raczu.skincareapp.ui.features.user
+package com.raczu.skincareapp.ui.features.profile
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Badge
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -60,7 +59,7 @@ fun ProfileScreen(
     title: String,
     onNavigateToUserUpdate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: UserProfileViewModel = viewModel(factory = AppViewModelProvider.factory)
+    viewModel: ProfileViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -82,6 +81,7 @@ fun ProfileScreen(
                 canNavigateBack = false
             )
         },
+        modifier = modifier
     ) { padding ->
         if (uiState.isLoading && uiState.user == null) {
             Box(
@@ -98,7 +98,7 @@ fun ProfileScreen(
             }
         } else {
             Column(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxSize()
                     .padding(
                         start = padding.calculateStartPadding(LocalLayoutDirection.current),
@@ -153,7 +153,6 @@ fun ProfileScreen(
             }
         }
     }
-
 }
 
 @Composable

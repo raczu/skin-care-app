@@ -13,10 +13,11 @@ import com.raczu.skincareapp.ui.features.notifications.NotificationsScreen
 import com.raczu.skincareapp.ui.features.products.ProductAddScreen
 import com.raczu.skincareapp.ui.features.products.ProductEditScreen
 import com.raczu.skincareapp.ui.features.products.ProductsScreen
+import com.raczu.skincareapp.ui.features.profile.EditProfileScreen
 import com.raczu.skincareapp.ui.features.routines.RoutineAddScreen
 import com.raczu.skincareapp.ui.features.routines.RoutineDetailsScreen
 import com.raczu.skincareapp.ui.features.routines.RoutineScreen
-import com.raczu.skincareapp.ui.features.user.ProfileScreen
+import com.raczu.skincareapp.ui.features.profile.ProfileScreen
 
 @Composable
 fun AppNavGraph(
@@ -114,10 +115,18 @@ fun AppNavGraph(
                 title = BottomBarScreen.Notifications.title
             )
         }
-        composable(route = BottomBarScreen.UserProfile.route) {
+        composable(route = BottomBarScreen.Profile.route) {
             ProfileScreen(
-                title = BottomBarScreen.UserProfile.title,
-                onNavigateToUserUpdate = { }
+                title = BottomBarScreen.Profile.title,
+                onNavigateToUserUpdate = {
+                    navController.navigate(TopBarScreen.EditProfile.route)
+                }
+            )
+        }
+        composable(route = TopBarScreen.EditProfile.route) {
+            EditProfileScreen(
+                title = TopBarScreen.EditProfile.title,
+                onNavigateBack = { navController.popBackStack() }
             )
         }
     }
