@@ -22,11 +22,13 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.raczu.skincareapp.di.AppViewModelProvider
 import com.raczu.skincareapp.ui.components.TopBar
@@ -39,16 +41,17 @@ fun EditProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: EditProfileViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(viewModel.uiState.isUpdateSuccessful) {
-        if (viewModel.uiState.isUpdateSuccessful) {
+    LaunchedEffect(uiState.isUpdateSuccessful) {
+        if (uiState.isUpdateSuccessful) {
             onNavigateBack()
         }
     }
 
-    LaunchedEffect(viewModel.uiState.error) {
-        viewModel.uiState.error?.let {
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let {
             snackbarHostState.showSnackbar(
                 message = it,
                 duration = SnackbarDuration.Short
@@ -78,17 +81,17 @@ fun EditProfileScreen(
                 .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            EditProfileForm(fields = viewModel.fields, enabled = !viewModel.uiState.isLoading)
+            EditProfileForm(fields = viewModel.fields, enabled = !uiState.isLoading)
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
                 onClick = { viewModel.saveChanges() },
-                enabled = !viewModel.uiState.isLoading,
+                enabled = !uiState.isLoading,
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium
             ) {
-                if (viewModel.uiState.isLoading) {
+                if (uiState.isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
                         color = MaterialTheme.colorScheme.onPrimary,

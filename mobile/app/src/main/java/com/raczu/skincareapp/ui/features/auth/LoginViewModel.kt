@@ -11,6 +11,11 @@ import com.raczu.skincareapp.data.domain.validation.rules.RequiredValidator
 import com.raczu.skincareapp.data.remote.RemoteException
 import com.raczu.skincareapp.data.repository.AuthRepository
 import com.raczu.skincareapp.ui.common.TextFieldState
+import com.raczu.skincareapp.ui.common.toUiErrorMessage
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 
@@ -23,8 +28,8 @@ data class LoginUiState(
 class LoginViewModel (
     private val authRepository: AuthRepository
 ) : ViewModel() {
-    var uiState by mutableStateOf(LoginUiState())
-        private set
+    private val _uiState = MutableStateFlow(LoginUiState())
+    val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
     class LoginFields(onChanged: () -> Unit) {
         val email = TextFieldState(
@@ -43,8 +48,8 @@ class LoginViewModel (
     }
 
     private val onFieldChanged = {
-        if (uiState.error != null) {
-            uiState = uiState.copy(error = null)
+        if (_uiState.value.error != null) {
+            _uiState.update { it.copy(error = null) }
         }
     }
     val fields = LoginFields(onChanged = onFieldChanged)
@@ -53,30 +58,20 @@ class LoginViewModel (
         if (!fields.validateAll()) return
 
         viewModelScope.launch {
-            uiState = uiState.copy(isLoading = true, error = null)
+            _uiState.update { it.copy(isLoading = true, error = null) }
             val result = authRepository.login(
                 email = fields.email.text,
                 password = fields.password.text
             )
 
             result.onSuccess {
-                uiState = uiState.copy(
-                    isLoading = false,
-                    isLoginSuccessful = true
-                )
-            }.onFailure { exception ->
-                val errorMessage = when (exception) {
-                    is RemoteException.ApiError -> {
-                        exception.problem.errors?.firstOrNull()?.message ?: exception.problem.detail
-                    }
-                    is RemoteException.NetworkError -> exception.message
-                    else -> "An unexpected error occurred"
+                _uiState.update {
+                    it.copy(isLoading = false, isLoginSuccessful = true)
                 }
-
-                uiState = uiState.copy(
-                    isLoading = false,
-                    error = errorMessage
-                )
+            }.onFailure { exception ->
+                _uiState.update {
+                    it.copy(isLoading = false, error = exception.toUiErrorMessage())
+                }
             }
         }
     }

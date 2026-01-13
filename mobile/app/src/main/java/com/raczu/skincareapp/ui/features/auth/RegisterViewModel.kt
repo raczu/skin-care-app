@@ -1,8 +1,5 @@
 package com.raczu.skincareapp.ui.features.auth
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.raczu.skincareapp.data.domain.models.user.UserRegistration
@@ -11,9 +8,13 @@ import com.raczu.skincareapp.data.domain.validation.rules.EmailValidator
 import com.raczu.skincareapp.data.domain.validation.rules.MatchValidator
 import com.raczu.skincareapp.data.domain.validation.rules.PasswordValidator
 import com.raczu.skincareapp.data.domain.validation.rules.RequiredValidator
-import com.raczu.skincareapp.data.remote.RemoteException
 import com.raczu.skincareapp.data.repository.UserRepository
 import com.raczu.skincareapp.ui.common.TextFieldState
+import com.raczu.skincareapp.ui.common.toUiErrorMessage
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 
@@ -26,8 +27,8 @@ data class RegisterUiState(
 class RegisterViewModel(
     private val userRepository: UserRepository
 ) : ViewModel() {
-    var uiState by mutableStateOf(RegisterUiState())
-        private set
+    private val _uiState = MutableStateFlow(RegisterUiState())
+    val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
 
     class RegisterFields(onChanged: () -> Unit) {
         val email = TextFieldState(
@@ -78,8 +79,8 @@ class RegisterViewModel(
     }
 
     private val onFieldChanged = {
-        if (uiState.error != null) {
-            uiState = uiState.copy(error = null)
+        if (_uiState.value.error != null) {
+            _uiState.update { it.copy(error = null) }
         }
     }
     val fields = RegisterFields(onChanged = onFieldChanged)
@@ -88,7 +89,7 @@ class RegisterViewModel(
         if (!fields.validateAll()) return
 
         viewModelScope.launch {
-            uiState = uiState.copy(isLoading = true, error = null)
+            _uiState.update { it.copy(isLoading = true, error = null) }
             val user = UserRegistration(
                 email = fields.email.text,
                 name = fields.name.text,
@@ -99,21 +100,13 @@ class RegisterViewModel(
 
             val result = userRepository.register(user)
             result.onSuccess { _ ->
-                uiState = uiState.copy(
-                    isLoading = false,
-                    isRegistrationSuccessful = true
-                )
-            }.onFailure { exception ->
-                val errorMessage = when (exception) {
-                    is RemoteException.ApiError -> exception.problem.detail
-                    is RemoteException.NetworkError -> exception.message
-                    else -> "An unexpected error occurred"
+                _uiState.update {
+                    it.copy(isLoading = false, isRegistrationSuccessful = true)
                 }
-
-                uiState = uiState.copy(
-                    isLoading = false,
-                    error = errorMessage
-                )
+            }.onFailure { exception ->
+                _uiState.update {
+                    it.copy(isLoading = false, error = exception.toUiErrorMessage())
+                }
             }
         }
 

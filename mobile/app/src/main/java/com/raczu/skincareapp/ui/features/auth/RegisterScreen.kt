@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -35,6 +36,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.raczu.skincareapp.di.AppViewModelProvider
 import kotlinx.coroutines.launch
@@ -49,9 +51,10 @@ fun RegisterScreen(
 ) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(viewModel.uiState.isRegistrationSuccessful) {
-        if (viewModel.uiState.isRegistrationSuccessful) {
+    LaunchedEffect(uiState.isRegistrationSuccessful) {
+        if (uiState.isRegistrationSuccessful) {
             scope.launch {
                 snackbarHostState.showSnackbar(
                     message = "Account created! Welcome to SkinCare ✨",
@@ -68,7 +71,7 @@ fun RegisterScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
         RegisterBody(
-            uiState = viewModel.uiState,
+            uiState = uiState,
             fields = viewModel.fields,
             onRegisterClick = { viewModel.register() },
             onLoginClick = onNavigateToLogin,

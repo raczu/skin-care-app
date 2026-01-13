@@ -8,8 +8,6 @@ import com.raczu.skincareapp.data.mappers.toDomain
 import com.raczu.skincareapp.data.mappers.toRequest
 import com.raczu.skincareapp.data.remote.api.ProductApiService
 import com.raczu.skincareapp.data.remote.api.safeApiCall
-import com.raczu.skincareapp.data.remote.dto.product.ProductCreateRequest
-import com.raczu.skincareapp.data.remote.dto.product.ProductUpdateRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

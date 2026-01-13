@@ -1,8 +1,5 @@
 package com.raczu.skincareapp.ui.features.profile
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.raczu.skincareapp.data.domain.models.user.User
@@ -10,11 +7,13 @@ import com.raczu.skincareapp.data.domain.models.user.UserUpdate
 import com.raczu.skincareapp.data.domain.validation.CompositeValidator
 import com.raczu.skincareapp.data.domain.validation.rules.EmailValidator
 import com.raczu.skincareapp.data.domain.validation.rules.RequiredValidator
-import com.raczu.skincareapp.data.remote.RemoteException
 import com.raczu.skincareapp.data.repository.UserRepository
 import com.raczu.skincareapp.ui.common.TextFieldState
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
+import com.raczu.skincareapp.ui.common.toUiErrorMessage
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class EditProfileUiState(
@@ -26,8 +25,8 @@ data class EditProfileUiState(
 class EditProfileViewModel(
     private val userRepository: UserRepository,
 ) : ViewModel() {
-    var uiState by mutableStateOf(EditProfileUiState())
-        private set
+    private val _uiState = MutableStateFlow(EditProfileUiState())
+    val uiState: StateFlow<EditProfileUiState> = _uiState.asStateFlow()
 
     class EditProfileFields(onChanged: () -> Unit) {
         val email = TextFieldState(
@@ -50,20 +49,25 @@ class EditProfileViewModel(
     }
 
     private val onFieldChanged = {
-        if (uiState.error != null) {
-            uiState = uiState.copy(error = null)
+        if (_uiState.value.error != null) {
+            _uiState.update { it.copy(error = null) }
         }
     }
     val fields = EditProfileFields(onChanged = onFieldChanged)
 
     init {
+        initializeUserData()
+    }
+
+    private fun initializeUserData() {
         viewModelScope.launch {
-            userRepository.user
-                .filterNotNull()
-                .first()
-                .let { fillFields(it) }
+            val cachedUser = userRepository.user.value
+            if (cachedUser != null) {
+                fillFields(cachedUser)
+            } else {
+                fetchUserProfile()
+            }
         }
-        fetchUserProfile()
     }
 
     private fun fillFields(user: User) {
@@ -74,17 +78,15 @@ class EditProfileViewModel(
 
     private fun fetchUserProfile() {
         viewModelScope.launch {
-            uiState = uiState.copy(isLoading = true, error = null)
+            _uiState.update { it.copy(isLoading = true, error = null) }
             val result = userRepository.getUser()
-            result.onSuccess {
-                uiState = uiState.copy(isLoading = false)
+            result.onSuccess { user ->
+                fillFields(user)
+                _uiState.update { it.copy(isLoading = false) }
             }.onFailure { exception ->
-                val errorMessage = when (exception) {
-                    is RemoteException.ApiError -> exception.problem.detail
-                    is RemoteException.NetworkError -> exception.message
-                    else -> "An unexpected error occurred"
+                _uiState.update {
+                    it.copy(isLoading = false, error = exception.toUiErrorMessage())
                 }
-                uiState = uiState.copy(isLoading = false, error = errorMessage)
             }
         }
     }
@@ -92,7 +94,7 @@ class EditProfileViewModel(
     fun saveChanges() {
         if (!fields.validateAll()) return
         viewModelScope.launch {
-            uiState = uiState.copy(isLoading = true, error = null)
+            _uiState.update { it.copy(isLoading = true, error = null) }
             val update = UserUpdate(
                 name = fields.name.text,
                 surname = fields.surname.text,
@@ -101,14 +103,11 @@ class EditProfileViewModel(
 
             val result = userRepository.updateUser(update)
             result.onSuccess {
-                uiState = uiState.copy(isLoading = false, isUpdateSuccessful = true)
+                _uiState.update { it.copy(isLoading = false, isUpdateSuccessful = true) }
             }.onFailure { exception ->
-                val errorMessage = when (exception) {
-                    is RemoteException.ApiError -> exception.problem.detail
-                    is RemoteException.NetworkError -> exception.message
-                    else -> "An unexpected error occurred"
+                _uiState.update {
+                    it.copy(isLoading = false, error = exception.toUiErrorMessage())
                 }
-                uiState = uiState.copy(isLoading = false, error = errorMessage)
             }
         }
     }

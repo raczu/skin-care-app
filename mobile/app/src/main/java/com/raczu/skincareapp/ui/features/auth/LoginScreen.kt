@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.raczu.skincareapp.di.AppViewModelProvider
 
@@ -40,15 +42,16 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
-    LaunchedEffect(viewModel.uiState.isLoginSuccessful) {
-        if (viewModel.uiState.isLoginSuccessful) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(uiState.isLoginSuccessful) {
+        if (uiState.isLoginSuccessful) {
             onLoginSuccess()
         }
     }
 
     Scaffold(modifier = modifier) { padding ->
         LoginBody(
-            uiState = viewModel.uiState,
+            uiState = uiState,
             fields = viewModel.fields,
             onLoginClick = { viewModel.login() },
             onRegisterClick = onNavigateToRegister,

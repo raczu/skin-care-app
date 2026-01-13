@@ -6,8 +6,10 @@ import com.raczu.skincareapp.data.domain.models.user.User
 import com.raczu.skincareapp.data.local.preferences.TokenManager
 import com.raczu.skincareapp.data.remote.RemoteException
 import com.raczu.skincareapp.data.repository.UserRepository
+import com.raczu.skincareapp.ui.common.toUiErrorMessage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -20,18 +22,30 @@ data class ProfileUiState(
     val error: String? = null
 )
 
+private data class ProfileLoadState(
+    val isLoading: Boolean = false,
+    val error: String? = null,
+)
+
 class ProfileViewModel(
     private val userRepository: UserRepository,
     private val tokenManager: TokenManager
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(ProfileUiState())
-    val uiState: StateFlow<ProfileUiState> = userRepository.user
-        .map { user -> ProfileUiState(user = user, isLoading = false) }
-        .stateIn(
-            scope = viewModelScope,
-            started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000L),
-            initialValue = ProfileUiState(isLoading = true)
+    private val _loadState = MutableStateFlow(ProfileLoadState())
+    val uiState: StateFlow<ProfileUiState> = combine(
+        userRepository.user,
+        _loadState
+    ) { user, loadState ->
+        ProfileUiState(
+            isLoading = loadState.isLoading,
+            error = loadState.error,
+            user = user
         )
+    }.stateIn(
+        scope = viewModelScope,
+        started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000L),
+        initialValue = ProfileUiState(isLoading = true)
+    )
 
     init {
         fetchUserProfile()
@@ -39,18 +53,13 @@ class ProfileViewModel(
 
     private fun fetchUserProfile() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
+            _loadState.update { it.copy(isLoading = true, error = null) }
             val result = userRepository.getUser()
             result.onSuccess {
-                _uiState.update { it.copy(isLoading = false) }
+                _loadState.update { it.copy(isLoading = false) }
             }.onFailure { exception ->
-                val errorMessage = when (exception) {
-                    is RemoteException.ApiError -> exception.problem.detail
-                    is RemoteException.NetworkError -> exception.message
-                    else -> "An unexpected error occurred"
-                }
-                _uiState.update {
-                    it.copy(isLoading = false, error = errorMessage)
+                _loadState.update {
+                    it.copy(isLoading = false, error = exception.toUiErrorMessage())
                 }
             }
         }
@@ -58,8 +67,9 @@ class ProfileViewModel(
 
     fun logout() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _loadState.update { it.copy(isLoading = true) }
             tokenManager.clearTokens()
+            _loadState.update { it.copy(isLoading = false) }
         }
     }
 }
