@@ -1,6 +1,8 @@
 package com.raczu.skincareapp.data.remote.dto.user
 
 import com.google.gson.annotations.SerializedName
+import java.time.Instant
+
 
 data class UserResponse(
     val id: String,
@@ -10,5 +12,5 @@ data class UserResponse(
     val username: String,
 
     @SerializedName("created_at")
-    val createdAt: String
+    val createdAt: Instant
 )

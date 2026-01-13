@@ -17,17 +17,17 @@ sealed class TopBarScreen(
         args = "routineId",
         title = "Routine details"
     )
-    data object ProductAdd: TopBarScreen(
+    data object AddProduct: TopBarScreen(
         route = "productAdd",
         title = "Add a new product"
     )
-    data object ProductEdit: TopBarScreen(
+    data object EditProduct: TopBarScreen(
         route = "productEdit",
         args = "productId",
         title = "Edit product details"
     )
     data object EditProfile: TopBarScreen(
-        route = "editProfile",
+        route = "profileEdit",
         title = "Edit Profile"
     )
 }

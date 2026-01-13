@@ -9,7 +9,7 @@ import com.raczu.skincareapp.data.local.entities.Product
 import com.raczu.skincareapp.data.local.entities.Routine
 import com.raczu.skincareapp.data.local.entities.RoutineWithProducts
 import com.raczu.skincareapp.utils.enums.RoutineType
-import com.raczu.skincareapp.data.repository.ProductRepository
+import com.raczu.skincareapp.data.repository.ProductRepositoryOld
 import com.raczu.skincareapp.data.repository.RoutineRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -29,7 +29,7 @@ data class RoutineAddUiState(
 
 class RoutineAddViewModel(
     private val routineRepository: RoutineRepository,
-    productRepository: ProductRepository
+    productRepository: ProductRepositoryOld
 ) : ViewModel() {
     var routineAddUiState by mutableStateOf(RoutineAddUiState())
         private set

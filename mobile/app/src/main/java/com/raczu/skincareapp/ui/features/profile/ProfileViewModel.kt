@@ -8,7 +8,6 @@ import com.raczu.skincareapp.data.remote.RemoteException
 import com.raczu.skincareapp.data.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -41,7 +40,7 @@ class ProfileViewModel(
     private fun fetchUserProfile() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
-            val result = userRepository.getUserProfile()
+            val result = userRepository.getUser()
             result.onSuccess {
                 _uiState.update { it.copy(isLoading = false) }
             }.onFailure { exception ->

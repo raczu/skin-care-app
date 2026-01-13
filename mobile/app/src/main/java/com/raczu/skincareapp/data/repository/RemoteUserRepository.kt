@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class RemoteUserRepository(
     private val userApiService: UserApiService
-) : UserRepository, CleanableRepository {
+) : UserRepository {
     private val _user = MutableStateFlow<User?>(null)
     override val user: StateFlow<User?> = _user.asStateFlow()
 
@@ -38,8 +38,8 @@ class RemoteUserRepository(
         }
     }
 
-    override suspend fun getUserProfile(): Result<User> {
-        val result = safeApiCall { userApiService.getUserProfile() }
+    override suspend fun getUser(): Result<User> {
+        val result = safeApiCall { userApiService.getUser() }
 
         return result.map { response ->
             val domainUser = User(

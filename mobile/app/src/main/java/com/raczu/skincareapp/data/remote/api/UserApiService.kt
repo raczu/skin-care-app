@@ -13,9 +13,8 @@ interface UserApiService {
     @POST("users")
     suspend fun register(@Body request: RegisterRequest): Response<UserResponse>
 
-
     @GET("users/me")
-    suspend fun getUserProfile(): Response<UserResponse>
+    suspend fun getUser(): Response<UserResponse>
 
     @PATCH("users/me")
     suspend fun updateUser(@Body request: UserUpdateRequest): Response<UserResponse>

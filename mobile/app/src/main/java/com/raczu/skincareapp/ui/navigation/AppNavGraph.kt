@@ -10,8 +10,7 @@ import androidx.navigation.navArgument
 import com.raczu.skincareapp.ui.features.auth.LoginScreen
 import com.raczu.skincareapp.ui.features.auth.RegisterScreen
 import com.raczu.skincareapp.ui.features.notifications.NotificationsScreen
-import com.raczu.skincareapp.ui.features.products.ProductAddScreen
-import com.raczu.skincareapp.ui.features.products.ProductEditScreen
+import com.raczu.skincareapp.ui.features.products.ProductFormScreen
 import com.raczu.skincareapp.ui.features.products.ProductsScreen
 import com.raczu.skincareapp.ui.features.profile.EditProfileScreen
 import com.raczu.skincareapp.ui.features.routines.RoutineAddScreen
@@ -85,29 +84,29 @@ fun AppNavGraph(
         composable(route = BottomBarScreen.Products.route) {
             ProductsScreen(
                 title = BottomBarScreen.Products.title,
-                navigateToProductAdd = {
-                    navController.navigate(TopBarScreen.ProductAdd.route)
+                onNavigateToProductAdd = {
+                    navController.navigate(TopBarScreen.AddProduct.route)
                 },
-                navigateToProductEdit = {
-                    navController.navigate("${TopBarScreen.ProductEdit.route}/$it")
+                onNavigateToProductEdit = {
+                    navController.navigate("${TopBarScreen.EditProduct.route}/$it")
                 }
             )
         }
-        composable(route = TopBarScreen.ProductAdd.route) {
-            ProductAddScreen(
-                title = TopBarScreen.ProductAdd.title,
-                onBack = { navController.popBackStack() }
+        composable(route = TopBarScreen.AddProduct.route) {
+            ProductFormScreen(
+                title = TopBarScreen.AddProduct.title,
+                onNavigateBack = { navController.popBackStack() }
             )
         }
         composable(
-            route = TopBarScreen.ProductEdit.routeWithArgs,
-            arguments = listOf(navArgument(TopBarScreen.ProductEdit.args) {
-                type = NavType.IntType
+            route = TopBarScreen.EditProduct.routeWithArgs,
+            arguments = listOf(navArgument(TopBarScreen.EditProduct.args) {
+                type = NavType.StringType
             })
         ) {
-            ProductEditScreen(
-                title = TopBarScreen.ProductEdit.title,
-                onBack = { navController.popBackStack() }
+            ProductFormScreen(
+                title = TopBarScreen.EditProduct.title,
+                onNavigateBack = { navController.popBackStack() }
             )
         }
         composable(route = BottomBarScreen.Notifications.route) {

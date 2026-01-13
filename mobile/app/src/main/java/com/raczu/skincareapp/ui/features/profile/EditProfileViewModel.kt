@@ -75,7 +75,7 @@ class EditProfileViewModel(
     private fun fetchUserProfile() {
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true, error = null)
-            val result = userRepository.getUserProfile()
+            val result = userRepository.getUser()
             result.onSuccess {
                 uiState = uiState.copy(isLoading = false)
             }.onFailure { exception ->

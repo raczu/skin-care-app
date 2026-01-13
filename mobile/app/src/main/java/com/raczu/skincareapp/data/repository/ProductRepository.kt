@@ -1,21 +1,17 @@
 package com.raczu.skincareapp.data.repository
 
-import com.raczu.skincareapp.data.local.daos.ProductDao
-import com.raczu.skincareapp.data.local.entities.Product
-import kotlinx.coroutines.flow.Flow
+import com.raczu.skincareapp.data.domain.models.product.Product
+import com.raczu.skincareapp.data.domain.models.product.ProductCreate
+import com.raczu.skincareapp.data.domain.models.product.ProductUpdate
+import com.raczu.skincareapp.data.domain.models.product.ProductsPage
+import kotlinx.coroutines.flow.StateFlow
 
-class ProductRepository(private val productDao: ProductDao) {
-    suspend fun insert(product: Product) = productDao.insert(product)
+interface ProductRepository : CleanableRepository {
+    val products: StateFlow<List<Product>>
 
-    suspend fun update(product: Product) = productDao.update(product)
-
-    suspend fun delete(product: Product) = productDao.delete(product)
-
-    fun getProduct(id: Int): Flow<Product?> = productDao.getProduct(id)
-
-    fun getProductsWithCursor(limit: Int = 0, offset: Int = 15): Flow<List<Product>> {
-        return productDao.getProductsWithCursor(limit, offset)
-    }
-
-    fun getAllProducts(): Flow<List<Product>> = productDao.getAllProducts()
+    suspend fun getProducts(limit: Int = 15, offset: Int = 0): Result<ProductsPage>
+    suspend fun getProductDetails(productId: String): Result<Product>
+    suspend fun addProduct(product: ProductCreate): Result<Product>
+    suspend fun updateProduct(productId: String, update: ProductUpdate): Result<Product>
+    suspend fun deleteProduct(productId: String): Result<Unit>
 }

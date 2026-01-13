@@ -5,10 +5,10 @@ import com.raczu.skincareapp.data.domain.models.user.UserRegistration
 import com.raczu.skincareapp.data.domain.models.user.UserUpdate
 import kotlinx.coroutines.flow.StateFlow
 
-interface UserRepository {
+interface UserRepository : CleanableRepository {
     val user: StateFlow<User?>
 
     suspend fun register(user: UserRegistration): Result<User>
-    suspend fun getUserProfile(): Result<User>
+    suspend fun getUser(): Result<User>
     suspend fun updateUser(update: UserUpdate): Result<User>
 }
