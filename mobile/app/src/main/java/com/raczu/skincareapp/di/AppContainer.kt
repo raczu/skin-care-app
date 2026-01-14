@@ -4,7 +4,6 @@ import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.raczu.skincareapp.BuildConfig
-import com.raczu.skincareapp.data.local.entities.AppDatabase
 import com.raczu.skincareapp.data.local.preferences.SecurityProvider
 import com.raczu.skincareapp.data.local.preferences.TokenManager
 import com.raczu.skincareapp.data.remote.ExplicitNullTypeAdapterFactory
