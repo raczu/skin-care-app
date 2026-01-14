@@ -73,7 +73,7 @@ fun ProductFormScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            ProductForm(
+            ProductFormContent(
                 fields = viewModel.fields,
                 enabled = !uiState.isLoading
             )
@@ -102,7 +102,7 @@ fun ProductFormScreen(
 }
 
 @Composable
-fun ProductForm(
+fun ProductFormContent(
     fields: ProductFormViewModel.ProductFormFields,
     enabled: Boolean,
     modifier: Modifier = Modifier

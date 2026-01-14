@@ -9,7 +9,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.raczu.skincareapp.ui.features.auth.LoginScreen
 import com.raczu.skincareapp.ui.features.auth.RegisterScreen
-import com.raczu.skincareapp.ui.features.notifications.NotificationsScreen
+import com.raczu.skincareapp.ui.features.notifications.RoutineNotificationFormContent
+import com.raczu.skincareapp.ui.features.notifications.RoutineNotificationFormScreen
+import com.raczu.skincareapp.ui.features.notifications.RoutineNotificationsScreen
 import com.raczu.skincareapp.ui.features.products.ProductFormScreen
 import com.raczu.skincareapp.ui.features.products.ProductsScreen
 import com.raczu.skincareapp.ui.features.profile.EditProfileScreen
@@ -116,8 +118,31 @@ fun AppNavGraph(
             )
         }
         composable(route = BottomBarScreen.Notifications.route) {
-            NotificationsScreen(
-                title = BottomBarScreen.Notifications.title
+            RoutineNotificationsScreen(
+                title = BottomBarScreen.Notifications.title,
+                onNavigateToNotificationAdd = {
+                    navController.navigate(TopBarScreen.AddRoutineNotificationRule.route)
+                },
+                onNavigateToNotificationEdit = {
+                    navController.navigate("${TopBarScreen.EditRoutineNotificationRule.route}/$it")
+                }
+            )
+        }
+        composable(route = TopBarScreen.AddRoutineNotificationRule.route) {
+            RoutineNotificationFormScreen(
+                title = TopBarScreen.AddRoutineNotificationRule.title,
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable(
+            route = TopBarScreen.EditRoutineNotificationRule.routeWithArgs,
+            arguments = listOf(navArgument(TopBarScreen.EditRoutineNotificationRule.args) {
+                type = NavType.StringType
+            })
+        ) {
+            RoutineNotificationFormScreen(
+                title = TopBarScreen.EditRoutineNotificationRule.title,
+                onNavigateBack = { navController.popBackStack() }
             )
         }
         composable(route = BottomBarScreen.Profile.route) {

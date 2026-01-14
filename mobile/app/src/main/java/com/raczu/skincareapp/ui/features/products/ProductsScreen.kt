@@ -5,7 +5,6 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,8 +12,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,11 +23,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -56,7 +51,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -132,11 +126,7 @@ fun ProductsScreen(
             onRefresh = { viewModel.refresh() },
             state = pullToRefreshState,
             modifier = Modifier
-                .padding(
-                    start = padding.calculateStartPadding(LocalLayoutDirection.current),
-                    top = padding.calculateTopPadding(),
-                    end = padding.calculateEndPadding(LocalLayoutDirection.current)
-                )
+                .padding(padding)
                 .fillMaxSize()
         ) {
             if (uiState.products.isEmpty() && !uiState.isLoading) {
@@ -146,15 +136,14 @@ fun ProductsScreen(
                     products = uiState.products,
                     isLoadingMore = uiState.isLoading,
                     listState = listState,
-                    onEditClick = onNavigateToProductEdit,
-                    onDeleteClick = { productId -> viewModel.deleteProduct(productId) },
+                    onItemEditClick = onNavigateToProductEdit,
+                    onItemDeleteClick = { productId -> viewModel.deleteProduct(productId) },
                     modifier = Modifier.fillMaxSize()
                 )
             }
         }
     }
 }
-
 
 @Composable
 fun EmptyProductsMessage(
@@ -194,8 +183,8 @@ fun ProductLazyList(
     products: List<Product>,
     isLoadingMore: Boolean,
     listState: LazyListState,
-    onEditClick: (String) -> Unit,
-    onDeleteClick: (String) -> Unit,
+    onItemEditClick: (String) -> Unit,
+    onItemDeleteClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -207,8 +196,8 @@ fun ProductLazyList(
         items(items = products, key = { it.id }) { product ->
             ProductListItem(
                 product = product,
-                onEditClick = { onEditClick(product.id) },
-                onDeleteClick = { onDeleteClick(product.id) }
+                onEditClick = { onItemEditClick(product.id) },
+                onDeleteClick = { onItemDeleteClick(product.id) }
             )
         }
 
@@ -305,7 +294,7 @@ fun ProductListItem(
                         Text(
                             text = "Tap to see description",
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.outline,
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
                             modifier = Modifier.padding(top = 8.dp)
                         )
                     }

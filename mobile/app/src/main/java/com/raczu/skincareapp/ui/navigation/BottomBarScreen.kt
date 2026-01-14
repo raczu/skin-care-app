@@ -24,7 +24,7 @@ sealed class BottomBarScreen(
     )
     data object Notifications: BottomBarScreen(
         route = "notifications",
-        title = "Notifications",
+        title = "Reminders",
         icon = Icons.Default.Notifications
     )
     data object Profile: BottomBarScreen(

@@ -1,5 +1,8 @@
 package com.raczu.skincareapp.data.remote.dto
 
+data class GenericMultipleItemsResponse<T>(
+    val items: List<T>
+)
 
 data class PagedResponse<T>(
     val items: List<T>,

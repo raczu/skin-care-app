@@ -9,8 +9,9 @@ import com.raczu.skincareapp.SkinCareApplication
 import com.raczu.skincareapp.ui.features.auth.LoginViewModel
 import com.raczu.skincareapp.ui.features.auth.RegisterViewModel
 import com.raczu.skincareapp.ui.features.main.MainViewModel
+import com.raczu.skincareapp.ui.features.notifications.RoutineNotificationFormViewModel
 import com.raczu.skincareapp.ui.features.products.ProductsViewModel
-import com.raczu.skincareapp.ui.features.notifications.RoutineNotificationViewModel
+import com.raczu.skincareapp.ui.features.notifications.RoutineNotificationsViewModel
 import com.raczu.skincareapp.ui.features.products.ProductFormViewModel
 import com.raczu.skincareapp.ui.features.profile.EditProfileViewModel
 import com.raczu.skincareapp.ui.features.profile.ProfileViewModel
@@ -85,8 +86,18 @@ object AppViewModelProvider {
         }
 
         initializer {
-            RoutineNotificationViewModel(
+            RoutineNotificationsViewModel(
                 skinCareApplication().container.routineNotificationRepository
+            )
+        }
+
+        initializer {
+            val savedStateHandle = this.createSavedStateHandle()
+            val ruleId: String? = savedStateHandle[TopBarScreen.EditRoutineNotificationRule.args]
+
+            RoutineNotificationFormViewModel(
+                skinCareApplication().container.routineNotificationRepository,
+                ruleId
             )
         }
 

@@ -8,19 +8,25 @@ import com.raczu.skincareapp.data.local.entities.AppDatabase
 import com.raczu.skincareapp.data.local.preferences.SecurityProvider
 import com.raczu.skincareapp.data.local.preferences.TokenManager
 import com.raczu.skincareapp.data.remote.InstantAdapter
+import com.raczu.skincareapp.data.remote.OffsetTimeAdapter
+import com.raczu.skincareapp.data.remote.RuntimeTypeAdapterFactory
 import com.raczu.skincareapp.data.remote.api.AuthApiService
 import com.raczu.skincareapp.data.remote.api.AuthInterceptor
+import com.raczu.skincareapp.data.remote.api.NotificationRuleApiService
 import com.raczu.skincareapp.data.remote.api.ProductApiService
 import com.raczu.skincareapp.data.remote.api.RoutineApiService
 import com.raczu.skincareapp.data.remote.api.TokenAuthenticator
 import com.raczu.skincareapp.data.remote.api.UserApiService
+import com.raczu.skincareapp.data.remote.dto.notification.NotificationRuleCreateRequest
+import com.raczu.skincareapp.data.remote.dto.notification.NotificationRuleResponse
 import com.raczu.skincareapp.data.repository.AuthRepository
+import com.raczu.skincareapp.data.repository.NotificationRuleRepository
 import com.raczu.skincareapp.data.repository.ProductRepository
 import com.raczu.skincareapp.data.repository.RemoteAuthRepository
+import com.raczu.skincareapp.data.repository.RemoteNotificationRuleRepository
 import com.raczu.skincareapp.data.repository.RemoteProductRepository
 import com.raczu.skincareapp.data.repository.RemoteRoutineRepository
 import com.raczu.skincareapp.data.repository.RemoteUserRepository
-import com.raczu.skincareapp.data.repository.RoutineNotificationRepository
 import com.raczu.skincareapp.data.repository.RoutineRepository
 import com.raczu.skincareapp.data.repository.UserRepository
 import okhttp3.OkHttpClient
@@ -28,6 +34,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.Instant
+import java.time.OffsetTime
 
 class AppContainer(private val context: Context) {
     private val securityProvider by lazy {
@@ -64,6 +71,25 @@ class AppContainer(private val context: Context) {
 
     private val gson: Gson = GsonBuilder()
         .registerTypeAdapter(Instant::class.java, InstantAdapter())
+        .registerTypeAdapter(OffsetTime::class.java, OffsetTimeAdapter())
+        .registerTypeAdapterFactory(
+            RuntimeTypeAdapterFactory
+                .of(NotificationRuleResponse::class.java, "frequency")
+                .registerSubtype(NotificationRuleResponse.Once::class.java, "ONCE")
+                .registerSubtype(NotificationRuleResponse.Daily::class.java, "DAILY")
+                .registerSubtype(NotificationRuleResponse.WeekdayOnly::class.java, "WEEKDAY_ONLY")
+                .registerSubtype(NotificationRuleResponse.EveryNDays::class.java, "EVERY_N_DAYS")
+                .registerSubtype(NotificationRuleResponse.Custom::class.java, "CUSTOM")
+        )
+        .registerTypeAdapterFactory(
+            RuntimeTypeAdapterFactory
+                .of(NotificationRuleCreateRequest::class.java, "frequency")
+                .registerSubtype(NotificationRuleCreateRequest.Once::class.java, "ONCE")
+                .registerSubtype(NotificationRuleCreateRequest.Daily::class.java, "DAILY")
+                .registerSubtype(NotificationRuleCreateRequest.WeekdayOnly::class.java, "WEEKDAY_ONLY")
+                .registerSubtype(NotificationRuleCreateRequest.EveryNDays::class.java, "EVERY_N_DAYS")
+                .registerSubtype(NotificationRuleCreateRequest.Custom::class.java, "CUSTOM")
+        )
         .create()
 
     private val retrofit = lazy {
@@ -102,9 +128,11 @@ class AppContainer(private val context: Context) {
         RemoteRoutineRepository(routineApiService)
     }
 
-    val routineNotificationRepository: RoutineNotificationRepository by lazy {
-        RoutineNotificationRepository(
-            AppDatabase.Companion.getDatabase(context).routineNotificationDao()
-        )
+    private val notificationRuleApiService: NotificationRuleApiService by lazy {
+        retrofit.value.create(NotificationRuleApiService::class.java)
+    }
+
+    val routineNotificationRepository: NotificationRuleRepository by lazy {
+        RemoteNotificationRuleRepository(notificationRuleApiService)
     }
 }

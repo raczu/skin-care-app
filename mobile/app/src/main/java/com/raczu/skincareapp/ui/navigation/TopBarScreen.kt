@@ -31,8 +31,17 @@ sealed class TopBarScreen(
         args = "productId",
         title = "Edit product details"
     )
+    data object AddRoutineNotificationRule: TopBarScreen(
+        route = "routine_notification_add",
+        title = "Add a new reminder"
+    )
+    data object EditRoutineNotificationRule: TopBarScreen(
+        route = "routine_notification_edit",
+        args = "ruleId",
+        title = "Edit reminder"
+    )
     data object EditProfile: TopBarScreen(
         route = "profile_edit",
-        title = "Edit Profile"
+        title = "Edit profile"
     )
 }
