@@ -5,6 +5,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,9 +26,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -91,7 +95,9 @@ fun ProductsScreen(
     val shouldLoadMore = remember {
         derivedStateOf {
             val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
-            lastVisibleItem != null && lastVisibleItem.index >= uiState.products.size - 3
+            lastVisibleItem != null &&
+                    uiState.products.isNotEmpty() &&
+                    lastVisibleItem.index >= uiState.products.size - 3
         }
     }
 
@@ -122,7 +128,7 @@ fun ProductsScreen(
         modifier = modifier
     ) { padding ->
         PullToRefreshBox(
-            isRefreshing = uiState.isLoading && uiState.products.isEmpty(),
+            isRefreshing = uiState.isLoading,
             onRefresh = { viewModel.refresh() },
             state = pullToRefreshState,
             modifier = Modifier
@@ -133,7 +139,7 @@ fun ProductsScreen(
                 )
                 .fillMaxSize()
         ) {
-            if (uiState.products.isEmpty()) {
+            if (uiState.products.isEmpty() && !uiState.isLoading) {
                 EmptyProductsMessage()
             } else {
                 ProductLazyList(
@@ -154,14 +160,30 @@ fun ProductsScreen(
 fun EmptyProductsMessage(
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier.fillMaxSize().padding(24.dp),
-        contentAlignment = Alignment.Center
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
+        Icon(
+            Icons.Default.Info,
+            contentDescription = null,
+            modifier = Modifier.size(64.dp),
+            tint = MaterialTheme.colorScheme.surfaceVariant
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Add products to see them here!",
-            style = MaterialTheme.typography.bodyLarge,
+            text = "Your shelf is empty.",
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = "Add your favorite skincare products to start tracking your daily routines.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.outline,
             textAlign = TextAlign.Center
         )
     }

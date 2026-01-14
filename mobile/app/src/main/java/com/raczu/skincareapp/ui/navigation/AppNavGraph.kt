@@ -13,10 +13,10 @@ import com.raczu.skincareapp.ui.features.notifications.NotificationsScreen
 import com.raczu.skincareapp.ui.features.products.ProductFormScreen
 import com.raczu.skincareapp.ui.features.products.ProductsScreen
 import com.raczu.skincareapp.ui.features.profile.EditProfileScreen
-import com.raczu.skincareapp.ui.features.routines.RoutineAddScreen
-import com.raczu.skincareapp.ui.features.routines.RoutineDetailsScreen
-import com.raczu.skincareapp.ui.features.routines.RoutineScreen
 import com.raczu.skincareapp.ui.features.profile.ProfileScreen
+import com.raczu.skincareapp.ui.features.routine.RoutineDetailsScreen
+import com.raczu.skincareapp.ui.features.routine.RoutineFormScreen
+import com.raczu.skincareapp.ui.features.routine.RoutineScreen
 
 @Composable
 fun AppNavGraph(
@@ -56,29 +56,35 @@ fun AppNavGraph(
         composable(route = BottomBarScreen.Routine.route) {
             RoutineScreen(
                 title = BottomBarScreen.Routine.title,
-                navigateToRoutineAdd = {
-                    navController.navigate(TopBarScreen.RoutineAdd.route)
-                },
-                navigateToRoutineDetails = {
-                    navController.navigate("${TopBarScreen.RoutineDetails.route}/$it")
-                }
-            )
-        }
-        composable(route = TopBarScreen.RoutineAdd.route) {
-            RoutineAddScreen(
-                title = TopBarScreen.RoutineAdd.title,
-                onBack = { navController.popBackStack() }
+                navController = navController
             )
         }
         composable(
             route = TopBarScreen.RoutineDetails.routeWithArgs,
             arguments = listOf(navArgument(TopBarScreen.RoutineDetails.args) {
-                type = NavType.IntType
+                type = NavType.StringType
             })
         ) {
             RoutineDetailsScreen(
                 title = TopBarScreen.RoutineDetails.title,
-                onBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable(route = TopBarScreen.AddRoutine.route) {
+            RoutineFormScreen(
+                title = TopBarScreen.AddRoutine.title,
+                navController = navController
+            )
+        }
+        composable(
+            route = TopBarScreen.EditRoutine.routeWithArgs,
+            arguments = listOf(navArgument(TopBarScreen.EditRoutine.args) {
+                type = NavType.StringType
+            })
+        ) {
+            RoutineFormScreen(
+                title = TopBarScreen.EditRoutine.title,
+                navController = navController
             )
         }
         composable(route = BottomBarScreen.Products.route) {

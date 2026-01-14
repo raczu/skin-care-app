@@ -1,18 +1,18 @@
 package com.raczu.skincareapp.ui.features.products
 
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.raczu.skincareapp.data.domain.models.product.ProductCreate
 import com.raczu.skincareapp.data.domain.models.product.ProductUpdate
 import com.raczu.skincareapp.data.domain.validation.rules.NoOpValidator
 import com.raczu.skincareapp.data.domain.validation.rules.RequiredValidator
-import com.raczu.skincareapp.data.remote.RemoteException
 import com.raczu.skincareapp.data.repository.ProductRepository
-import com.raczu.skincareapp.ui.common.TextFieldState
+import com.raczu.skincareapp.ui.common.FormFieldState
+import com.raczu.skincareapp.ui.common.toUiErrorMessage
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class ProductFormUiState(
@@ -26,24 +26,28 @@ class ProductFormViewModel(
     private val productRepository: ProductRepository,
     private val productId: String? = null
 ) : ViewModel() {
-    var uiState by mutableStateOf(ProductFormUiState(isEditMode = productId != null))
-        private set
+    private val _uiState = MutableStateFlow(ProductFormUiState(isEditMode = productId != null))
+    val uiState: StateFlow<ProductFormUiState> = _uiState.asStateFlow()
 
     class ProductFormFields(onChanged: () -> Unit) {
-        val name = TextFieldState(
+        val name = FormFieldState(
+            initialValue = "",
             validator = RequiredValidator("Name is required"),
             onValueChangeCallback = onChanged
         )
-        var brand = TextFieldState(
-            validator = NoOpValidator,
+        var brand = FormFieldState(
+            initialValue = "",
+            validator = NoOpValidator(),
             onValueChangeCallback = onChanged
         )
-        var purpose = TextFieldState(
-            validator = NoOpValidator,
+        var purpose = FormFieldState(
+            initialValue = "",
+            validator = NoOpValidator(),
             onValueChangeCallback = onChanged
         )
-        var description = TextFieldState(
-            validator = NoOpValidator,
+        var description = FormFieldState(
+            initialValue = "",
+            validator = NoOpValidator(),
             onValueChangeCallback = onChanged
         )
 
@@ -51,8 +55,8 @@ class ProductFormViewModel(
     }
 
     private val onFieldChanged = {
-        if (uiState.error != null) {
-            uiState = uiState.copy(error = null)
+        if (_uiState.value.error != null) {
+            _uiState.update { it.copy(error = null) }
         }
     }
     val fields = ProductFormFields(onChanged = onFieldChanged)
@@ -65,26 +69,19 @@ class ProductFormViewModel(
 
     private fun loadProductDetails(productId: String) {
         viewModelScope.launch {
-            uiState = uiState.copy(isLoading = true, error = null)
+            _uiState.update { it.copy(isLoading = true, error = null) }
             val result = productRepository.getProductDetails(productId)
 
             result.onSuccess { product ->
-                fields.name.text = product.name
-                fields.brand.text = product.brand ?: ""
-                fields.purpose.text = product.purpose ?: ""
-                fields.description.text = product.description ?: ""
-                uiState = uiState.copy(isLoading = false)
+                fields.name.value = product.name
+                fields.brand.value = product.brand ?: ""
+                fields.purpose.value = product.purpose ?: ""
+                fields.description.value = product.description ?: ""
+                _uiState.update { it.copy(isLoading = false) }
             }.onFailure { exception ->
-                val errorMessage = when (exception) {
-                    is RemoteException.ApiError -> exception.problem.detail
-                    is RemoteException.NetworkError -> exception.message
-                    else -> "An unexpected error occurred"
+                _uiState.update {
+                    it.copy(isLoading = false, error = exception.toUiErrorMessage())
                 }
-
-                uiState = uiState.copy(
-                    isLoading = false,
-                    error = errorMessage
-                )
             }
         }
     }
@@ -93,11 +90,11 @@ class ProductFormViewModel(
         if (!fields.validateAll()) return
 
         viewModelScope.launch {
-            uiState = uiState.copy(isLoading = true, error = null)
-            val name = fields.name.text
-            val brand = fields.brand.text.ifBlank { null }
-            val purpose = fields.purpose.text.ifBlank { null }
-            val desc = fields.description.text.ifBlank { null }
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            val name = fields.name.value
+            val brand = fields.brand.value.ifBlank { null }
+            val purpose = fields.purpose.value.ifBlank { null }
+            val desc = fields.description.value.ifBlank { null }
 
             val result = if (productId == null) {
                 productRepository.addProduct(
@@ -110,23 +107,13 @@ class ProductFormViewModel(
             }
 
             result.onSuccess {
-                uiState = uiState.copy(
-                    isLoading = false,
-                    isOperationSuccessful = true
-                )
-            }.onFailure { exception ->
-                val errorMessage = when (exception) {
-                    is RemoteException.ApiError -> exception.problem.detail
-                    is RemoteException.NetworkError -> exception.message
-                    else -> "An unexpected error occurred"
+                _uiState.update {
+                    it.copy(isLoading = false, isOperationSuccessful = true)
                 }
-
-                Log.e("ProductFormViewModel", "Error saving product", exception)
-
-                uiState = uiState.copy(
-                    isLoading = false,
-                    error = errorMessage
-                )
+            }.onFailure { exception ->
+                _uiState.update {
+                    it.copy(isLoading = false, error = exception.toUiErrorMessage())
+                }
             }
         }
     }

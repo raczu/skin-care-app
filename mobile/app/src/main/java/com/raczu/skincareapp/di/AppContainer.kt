@@ -11,13 +11,14 @@ import com.raczu.skincareapp.data.remote.InstantAdapter
 import com.raczu.skincareapp.data.remote.api.AuthApiService
 import com.raczu.skincareapp.data.remote.api.AuthInterceptor
 import com.raczu.skincareapp.data.remote.api.ProductApiService
+import com.raczu.skincareapp.data.remote.api.RoutineApiService
 import com.raczu.skincareapp.data.remote.api.TokenAuthenticator
 import com.raczu.skincareapp.data.remote.api.UserApiService
 import com.raczu.skincareapp.data.repository.AuthRepository
 import com.raczu.skincareapp.data.repository.ProductRepository
-import com.raczu.skincareapp.data.repository.ProductRepositoryOld
 import com.raczu.skincareapp.data.repository.RemoteAuthRepository
 import com.raczu.skincareapp.data.repository.RemoteProductRepository
+import com.raczu.skincareapp.data.repository.RemoteRoutineRepository
 import com.raczu.skincareapp.data.repository.RemoteUserRepository
 import com.raczu.skincareapp.data.repository.RoutineNotificationRepository
 import com.raczu.skincareapp.data.repository.RoutineRepository
@@ -93,8 +94,12 @@ class AppContainer(private val context: Context) {
         RemoteProductRepository(productApiService)
     }
 
+    private val routineApiService: RoutineApiService by lazy {
+        retrofit.value.create(RoutineApiService::class.java)
+    }
+
     val routineRepository: RoutineRepository by lazy {
-        RoutineRepository(AppDatabase.Companion.getDatabase(context).routineDao())
+        RemoteRoutineRepository(routineApiService)
     }
 
     val routineNotificationRepository: RoutineNotificationRepository by lazy {

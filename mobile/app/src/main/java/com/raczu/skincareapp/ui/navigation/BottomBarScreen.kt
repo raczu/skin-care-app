@@ -14,7 +14,7 @@ sealed class BottomBarScreen(
 ) {
     data object Routine: BottomBarScreen(
         route = "routine",
-        title = "Routine",
+        title = "Daily Journal",
         icon = Icons.Default.DateRange
     )
     data object Products: BottomBarScreen(

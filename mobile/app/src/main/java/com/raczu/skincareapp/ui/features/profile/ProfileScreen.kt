@@ -51,6 +51,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.raczu.skincareapp.data.domain.models.user.User
 import com.raczu.skincareapp.di.AppViewModelProvider
+import com.raczu.skincareapp.ui.components.CenteredLoading
 import com.raczu.skincareapp.ui.components.TopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -84,27 +85,12 @@ fun ProfileScreen(
         modifier = modifier
     ) { padding ->
         if (uiState.isLoading && uiState.user == null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(
-                        start = padding.calculateStartPadding(LocalLayoutDirection.current),
-                        top = padding.calculateTopPadding(),
-                        end = padding.calculateEndPadding(LocalLayoutDirection.current)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            CenteredLoading(modifier = Modifier.padding(padding))
         } else {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(
-                        start = padding.calculateStartPadding(LocalLayoutDirection.current),
-                        top = padding.calculateTopPadding(),
-                        end = padding.calculateEndPadding(LocalLayoutDirection.current)
-                    )
+                    .padding(padding)
                     .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(24.dp)

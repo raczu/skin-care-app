@@ -9,6 +9,7 @@ import com.raczu.skincareapp.data.domain.validation.rules.MatchValidator
 import com.raczu.skincareapp.data.domain.validation.rules.PasswordValidator
 import com.raczu.skincareapp.data.domain.validation.rules.RequiredValidator
 import com.raczu.skincareapp.data.repository.UserRepository
+import com.raczu.skincareapp.ui.common.FormFieldState
 import com.raczu.skincareapp.ui.common.TextFieldState
 import com.raczu.skincareapp.ui.common.toUiErrorMessage
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,37 +32,43 @@ class RegisterViewModel(
     val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
 
     class RegisterFields(onChanged: () -> Unit) {
-        val email = TextFieldState(
+        val email = FormFieldState(
+            initialValue = "",
             validator = CompositeValidator(
                 RequiredValidator("Email is required"),
                 EmailValidator
             ),
             onValueChangeCallback = onChanged
         )
-        val name = TextFieldState(
+        val name = FormFieldState(
+            initialValue = "",
             validator = RequiredValidator("Name is required"),
             onValueChangeCallback = onChanged
         )
-        val surname = TextFieldState(
+        val surname = FormFieldState(
+            initialValue = "",
             validator = RequiredValidator("Surname is required"),
             onValueChangeCallback = onChanged
         )
-        val username = TextFieldState(
+        val username = FormFieldState(
+            initialValue = "",
             validator = RequiredValidator("Username is required"),
             onValueChangeCallback = onChanged
         )
-        val password = TextFieldState(
+        val password = FormFieldState(
+            initialValue = "",
             validator = CompositeValidator(
                 RequiredValidator("Password is required"),
                 PasswordValidator
             ),
             onValueChangeCallback = onChanged
         )
-        val confirmPassword = TextFieldState(
+        val confirmPassword = FormFieldState(
+            initialValue = "",
             validator = CompositeValidator(
                 RequiredValidator("Please confirm your password"),
                 MatchValidator(
-                    targetTextProvider = { password.text },
+                    targetTextProvider = { password.value },
                     "Passwords do not match"
                 )
             ),
@@ -91,11 +98,11 @@ class RegisterViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
             val user = UserRegistration(
-                email = fields.email.text,
-                name = fields.name.text,
-                surname = fields.surname.text,
-                username = fields.username.text,
-                password = fields.password.text
+                email = fields.email.value,
+                name = fields.name.value,
+                surname = fields.surname.value,
+                username = fields.username.value,
+                password = fields.password.value
             )
 
             val result = userRepository.register(user)

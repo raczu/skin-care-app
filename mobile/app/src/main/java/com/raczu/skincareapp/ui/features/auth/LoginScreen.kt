@@ -187,7 +187,7 @@ fun LoginForm(
         modifier = modifier
     ) {
         OutlinedTextField(
-            value = fields.email.text,
+            value = fields.email.value,
             onValueChange = { fields.email.onValueChange(it) },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth(),
@@ -201,7 +201,7 @@ fun LoginForm(
             }
         )
         OutlinedTextField(
-            value = fields.password.text,
+            value = fields.password.value,
             onValueChange = { fields.password.onValueChange(it) },
             label = { Text("Password") },
             modifier = Modifier.fillMaxWidth(),

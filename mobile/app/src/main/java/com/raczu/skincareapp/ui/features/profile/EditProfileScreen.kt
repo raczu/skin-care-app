@@ -117,7 +117,7 @@ fun EditProfileForm(
         modifier = modifier
     ) {
         OutlinedTextField(
-            value = fields.name.text,
+            value = fields.name.value,
             onValueChange = { fields.name.onValueChange(it) },
             label = { Text("Name") },
             modifier = Modifier.fillMaxWidth(),
@@ -132,7 +132,7 @@ fun EditProfileForm(
         )
 
         OutlinedTextField(
-            value = fields.surname.text,
+            value = fields.surname.value,
             onValueChange = { fields.surname.onValueChange(it) },
             label = { Text("Surname") },
             modifier = Modifier.fillMaxWidth(),
@@ -147,7 +147,7 @@ fun EditProfileForm(
         )
 
         OutlinedTextField(
-            value = fields.email.text,
+            value = fields.email.value,
             onValueChange = { fields.email.onValueChange(it) },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth(),

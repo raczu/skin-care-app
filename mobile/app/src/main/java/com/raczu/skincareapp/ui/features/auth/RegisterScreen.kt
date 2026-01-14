@@ -211,7 +211,7 @@ fun RegisterForm(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             OutlinedTextField(
-                value = fields.name.text,
+                value = fields.name.value,
                 onValueChange = { fields.name.onValueChange(it) },
                 label = { Text("Name") },
                 modifier = Modifier.weight(1f),
@@ -225,7 +225,7 @@ fun RegisterForm(
                 }
             )
             OutlinedTextField(
-                value = fields.surname.text,
+                value = fields.surname.value,
                 onValueChange = { fields.surname.onValueChange(it) },
                 label = { Text("Surname") },
                 modifier = Modifier.weight(1f),
@@ -243,7 +243,7 @@ fun RegisterForm(
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = fields.username.text,
+            value = fields.username.value,
             onValueChange = { fields.username.onValueChange(it) },
             label = { Text("Username") },
             modifier = Modifier.fillMaxWidth(),
@@ -257,7 +257,7 @@ fun RegisterForm(
             }
         )
         OutlinedTextField(
-            value = fields.email.text,
+            value = fields.email.value,
             onValueChange = { fields.email.onValueChange(it) },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth(),
@@ -274,7 +274,7 @@ fun RegisterForm(
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = fields.password.text,
+            value = fields.password.value,
             onValueChange = { fields.password.onValueChange(it) },
             label = { Text("Password") },
             modifier = Modifier.fillMaxWidth(),
@@ -289,7 +289,7 @@ fun RegisterForm(
             }
         )
         OutlinedTextField(
-            value = fields.confirmPassword.text,
+            value = fields.confirmPassword.value,
             onValueChange = { fields.confirmPassword.onValueChange(it) },
             label = { Text("Confirm Password") },
             modifier = Modifier.fillMaxWidth(),

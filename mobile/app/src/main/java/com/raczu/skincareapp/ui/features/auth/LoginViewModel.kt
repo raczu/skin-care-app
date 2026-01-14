@@ -1,15 +1,12 @@
 package com.raczu.skincareapp.ui.features.auth
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.raczu.skincareapp.data.domain.validation.CompositeValidator
 import com.raczu.skincareapp.data.domain.validation.rules.EmailValidator
 import com.raczu.skincareapp.data.domain.validation.rules.RequiredValidator
-import com.raczu.skincareapp.data.remote.RemoteException
 import com.raczu.skincareapp.data.repository.AuthRepository
+import com.raczu.skincareapp.ui.common.FormFieldState
 import com.raczu.skincareapp.ui.common.TextFieldState
 import com.raczu.skincareapp.ui.common.toUiErrorMessage
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,14 +29,16 @@ class LoginViewModel (
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
     class LoginFields(onChanged: () -> Unit) {
-        val email = TextFieldState(
+        val email = FormFieldState(
+            initialValue = "",
             validator = CompositeValidator(
                 RequiredValidator("Email is required"),
                 EmailValidator
             ),
             onValueChangeCallback = onChanged
         )
-        val password = TextFieldState(
+        val password = FormFieldState(
+            initialValue = "",
             validator = RequiredValidator("Password is required"),
             onValueChangeCallback = onChanged
         )
@@ -60,8 +59,8 @@ class LoginViewModel (
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
             val result = authRepository.login(
-                email = fields.email.text,
-                password = fields.password.text
+                email = fields.email.value,
+                password = fields.password.value
             )
 
             result.onSuccess {

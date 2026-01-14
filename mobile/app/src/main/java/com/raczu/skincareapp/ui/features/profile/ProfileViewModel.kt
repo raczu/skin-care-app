@@ -4,13 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.raczu.skincareapp.data.domain.models.user.User
 import com.raczu.skincareapp.data.local.preferences.TokenManager
-import com.raczu.skincareapp.data.remote.RemoteException
 import com.raczu.skincareapp.data.repository.UserRepository
 import com.raczu.skincareapp.ui.common.toUiErrorMessage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch

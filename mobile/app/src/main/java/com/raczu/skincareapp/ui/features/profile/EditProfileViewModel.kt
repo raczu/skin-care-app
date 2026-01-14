@@ -8,6 +8,7 @@ import com.raczu.skincareapp.data.domain.validation.CompositeValidator
 import com.raczu.skincareapp.data.domain.validation.rules.EmailValidator
 import com.raczu.skincareapp.data.domain.validation.rules.RequiredValidator
 import com.raczu.skincareapp.data.repository.UserRepository
+import com.raczu.skincareapp.ui.common.FormFieldState
 import com.raczu.skincareapp.ui.common.TextFieldState
 import com.raczu.skincareapp.ui.common.toUiErrorMessage
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,18 +30,21 @@ class EditProfileViewModel(
     val uiState: StateFlow<EditProfileUiState> = _uiState.asStateFlow()
 
     class EditProfileFields(onChanged: () -> Unit) {
-        val email = TextFieldState(
+        val email = FormFieldState(
+            initialValue = "",
             validator = CompositeValidator(
                 RequiredValidator("Email is required"),
                 EmailValidator
             ),
             onValueChangeCallback = onChanged
         )
-        val name = TextFieldState(
+        val name = FormFieldState(
+            initialValue = "",
             validator = RequiredValidator("Name is required"),
             onValueChangeCallback = onChanged
         )
-        val surname = TextFieldState(
+        val surname = FormFieldState(
+            initialValue = "",
             validator = RequiredValidator("Surname is required"),
             onValueChangeCallback = onChanged
         )
@@ -71,9 +75,9 @@ class EditProfileViewModel(
     }
 
     private fun fillFields(user: User) {
-        fields.name.text = user.name
-        fields.surname.text = user.surname
-        fields.email.text = user.email
+        fields.name.value = user.name
+        fields.surname.value = user.surname
+        fields.email.value = user.email
     }
 
     private fun fetchUserProfile() {
@@ -96,9 +100,9 @@ class EditProfileViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
             val update = UserUpdate(
-                name = fields.name.text,
-                surname = fields.surname.text,
-                email = fields.email.text
+                name = fields.name.value,
+                surname = fields.surname.value,
+                email = fields.email.value
             )
 
             val result = userRepository.updateUser(update)

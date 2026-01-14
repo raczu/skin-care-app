@@ -21,10 +21,12 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.raczu.skincareapp.di.AppViewModelProvider
 import com.raczu.skincareapp.ui.components.TopBar
@@ -36,7 +38,7 @@ fun ProductFormScreen(
     onNavigateBack: () -> Unit,
     viewModel: ProductFormViewModel = viewModel(factory = AppViewModelProvider.factory)
 ) {
-    val uiState = viewModel.uiState
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(uiState.isOperationSuccessful) {
@@ -110,7 +112,7 @@ fun ProductForm(
         modifier = modifier
     ) {
         OutlinedTextField(
-            value = fields.name.text,
+            value = fields.name.value,
             onValueChange = { fields.name.onValueChange(it) },
             label = { Text("Product Name") },
             modifier = Modifier.fillMaxWidth(),
@@ -124,21 +126,21 @@ fun ProductForm(
             }
         )
         OutlinedTextField(
-            value = fields.brand.text,
+            value = fields.brand.value,
             onValueChange = { fields.brand.onValueChange(it) },
             label = { Text("Brand") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled
         )
         OutlinedTextField(
-            value = fields.purpose.text,
+            value = fields.purpose.value,
             onValueChange = { fields.purpose.onValueChange(it) },
             label = { Text("Purpose") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled
         )
         OutlinedTextField(
-            value = fields.description.text,
+            value = fields.description.value,
             onValueChange = { fields.description.onValueChange(it) },
             label = { Text("Description") },
             modifier = Modifier.fillMaxWidth(),
