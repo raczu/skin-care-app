@@ -7,6 +7,7 @@ import com.raczu.skincareapp.BuildConfig
 import com.raczu.skincareapp.data.local.entities.AppDatabase
 import com.raczu.skincareapp.data.local.preferences.SecurityProvider
 import com.raczu.skincareapp.data.local.preferences.TokenManager
+import com.raczu.skincareapp.data.remote.ExplicitNullTypeAdapterFactory
 import com.raczu.skincareapp.data.remote.InstantAdapter
 import com.raczu.skincareapp.data.remote.OffsetTimeAdapter
 import com.raczu.skincareapp.data.remote.RuntimeTypeAdapterFactory
@@ -72,6 +73,7 @@ class AppContainer(private val context: Context) {
     private val gson: Gson = GsonBuilder()
         .registerTypeAdapter(Instant::class.java, InstantAdapter())
         .registerTypeAdapter(OffsetTime::class.java, OffsetTimeAdapter())
+        .registerTypeAdapterFactory(ExplicitNullTypeAdapterFactory())
         .registerTypeAdapterFactory(
             RuntimeTypeAdapterFactory
                 .of(NotificationRuleResponse::class.java, "frequency")

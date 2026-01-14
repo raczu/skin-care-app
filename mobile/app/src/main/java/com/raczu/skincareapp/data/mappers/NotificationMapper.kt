@@ -3,6 +3,7 @@ package com.raczu.skincareapp.data.mappers
 import com.raczu.skincareapp.data.domain.models.notification.NotificationRule
 import com.raczu.skincareapp.data.domain.models.notification.NotificationRuleCreate
 import com.raczu.skincareapp.data.domain.models.notification.NotificationRuleUpdate
+import com.raczu.skincareapp.data.remote.ExplicitNull
 import com.raczu.skincareapp.data.remote.dto.notification.NotificationRuleCreateRequest
 import com.raczu.skincareapp.data.remote.dto.notification.NotificationRuleResponse
 import com.raczu.skincareapp.data.remote.dto.notification.NotificationRuleUpdateRequest
@@ -41,8 +42,8 @@ fun NotificationRuleUpdate.toRequest(): NotificationRuleUpdateRequest {
     return NotificationRuleUpdateRequest(
         timeOfDay = this.timeOfDay?.atOffset(ZoneOffset.UTC),
         frequency = this.frequency,
-        everyN = this.everyN,
-        weekdays = this.weekdays,
+        everyN = ExplicitNull(this.everyN),
+        weekdays = ExplicitNull(this.weekdays),
         enabled = this.enabled
     )
 }

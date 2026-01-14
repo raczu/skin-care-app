@@ -4,6 +4,7 @@ import com.raczu.skincareapp.data.domain.models.routine.Routine
 import com.raczu.skincareapp.data.domain.models.routine.RoutineCreate
 import com.raczu.skincareapp.data.domain.models.routine.RoutineType
 import com.raczu.skincareapp.data.domain.models.routine.RoutineUpdate
+import com.raczu.skincareapp.data.remote.ExplicitNull
 import com.raczu.skincareapp.data.remote.api.toIsoString
 import com.raczu.skincareapp.data.remote.dto.routine.RoutineCreateRequest
 import com.raczu.skincareapp.data.remote.dto.routine.RoutineResponse
@@ -37,7 +38,7 @@ fun RoutineResponse.toDomain(): Routine {
 fun RoutineUpdate.toRequest(): RoutineUpdateRequest {
     return RoutineUpdateRequest(
         type = this.type?.name,
-        notes = this.notes,
+        notes = ExplicitNull(this.notes),
         performedAt = this.performedAt?.toIsoString(),
         productIds = this.productIds
     )
