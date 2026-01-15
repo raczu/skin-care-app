@@ -1,11 +1,11 @@
 from contextlib import suppress
 
 from fastapi import APIRouter, Response
+from firebase_admin.exceptions import FirebaseError
 
 from app import crud
 from app.api.deps import SessionDep
 from app.services.fcm import FCMService
-from firebase_admin.exceptions import FirebaseError
 
 router = APIRouter(prefix="/private", tags=["private"])
 
