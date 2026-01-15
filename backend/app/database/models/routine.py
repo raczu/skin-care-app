@@ -37,8 +37,6 @@ class Routine(Base):
 class RoutineProduct(Base):
     __tablename__ = "routine_product"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4()
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     routine_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("routine.id", ondelete="CASCADE"))
     product_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("product.id", ondelete="CASCADE"))

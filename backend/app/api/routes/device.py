@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, HTTPException, status
 
 from app import crud
 from app.api.deps import CurrentUserDep, SessionDep
@@ -17,6 +17,12 @@ router = APIRouter(prefix="/devices", tags=["devices"])
 async def register_device(
     *, device_in: UserDeviceCreate, session: SessionDep, user: CurrentUserDep
 ) -> UserDevice:
+    device = await crud.device.get_device_by_fcm_token(session, device_in.fcm_token)
+    if device is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Device with this FCM token is already registered",
+        )
     device = await crud.device.create_user_device(session, user.id, device_in)
     return device
 

@@ -17,7 +17,7 @@ class UserDevice(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
     meta: Mapped[str] = mapped_column(nullable=False)
-    fcm_token: Mapped[str] = mapped_column(nullable=False)
+    fcm_token: Mapped[str] = mapped_column(nullable=False, unique=True, index=True)
     registered_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now)
 
     @validates("meta")
