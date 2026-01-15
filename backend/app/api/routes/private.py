@@ -5,6 +5,7 @@ from fastapi import APIRouter, Response
 from app import crud
 from app.api.deps import SessionDep
 from app.services.fcm import FCMService
+from firebase_admin.exceptions import FirebaseError
 
 router = APIRouter(prefix="/private", tags=["private"])
 
@@ -15,7 +16,7 @@ router = APIRouter(prefix="/private", tags=["private"])
 async def notify(*, session: SessionDep) -> Response:
     devices = await crud.device.get_all_user_devices(session)
     for device in devices:
-        with suppress(Exception):
+        with suppress(FirebaseError):
             FCMService.send_message(
                 token=device.fcm_token,
                 title="Test Notification",
