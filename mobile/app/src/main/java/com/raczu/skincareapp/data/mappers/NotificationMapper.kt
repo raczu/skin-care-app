@@ -4,13 +4,14 @@ import com.raczu.skincareapp.data.domain.models.notification.NotificationRule
 import com.raczu.skincareapp.data.domain.models.notification.NotificationRuleCreate
 import com.raczu.skincareapp.data.domain.models.notification.NotificationRuleUpdate
 import com.raczu.skincareapp.data.remote.ExplicitNull
+import com.raczu.skincareapp.data.remote.api.toDeviceLocalTime
+import com.raczu.skincareapp.data.remote.api.toUtcOffsetTime
 import com.raczu.skincareapp.data.remote.dto.notification.NotificationRuleCreateRequest
 import com.raczu.skincareapp.data.remote.dto.notification.NotificationRuleResponse
 import com.raczu.skincareapp.data.remote.dto.notification.NotificationRuleUpdateRequest
-import java.time.ZoneOffset
 
 fun NotificationRuleResponse.toDomain(): NotificationRule {
-    val localTime = this.timeOfDay.toLocalTime()
+    val localTime = this.timeOfDay.toDeviceLocalTime()
     return when (this) {
         is NotificationRuleResponse.Once -> NotificationRule.Once(id, localTime, enabled)
         is NotificationRuleResponse.Daily -> NotificationRule.Daily(id, localTime, enabled)
@@ -21,7 +22,7 @@ fun NotificationRuleResponse.toDomain(): NotificationRule {
 }
 
 fun NotificationRuleCreate.toRequest(): NotificationRuleCreateRequest {
-    val offsetTime = this.timeOfDay.atOffset(ZoneOffset.UTC)
+    val offsetTime = this.timeOfDay.toUtcOffsetTime()
     return when (this) {
         is NotificationRuleCreate.Once -> NotificationRuleCreateRequest.Once(offsetTime)
         is NotificationRuleCreate.Daily -> NotificationRuleCreateRequest.Daily(offsetTime)
@@ -40,7 +41,7 @@ fun NotificationRuleCreate.toRequest(): NotificationRuleCreateRequest {
 
 fun NotificationRuleUpdate.toRequest(): NotificationRuleUpdateRequest {
     return NotificationRuleUpdateRequest(
-        timeOfDay = this.timeOfDay?.atOffset(ZoneOffset.UTC),
+        timeOfDay = this.timeOfDay?.toUtcOffsetTime(),
         frequency = this.frequency,
         everyN = ExplicitNull(this.everyN),
         weekdays = ExplicitNull(this.weekdays),
