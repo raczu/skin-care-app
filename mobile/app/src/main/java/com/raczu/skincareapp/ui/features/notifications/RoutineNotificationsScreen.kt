@@ -142,10 +142,16 @@ fun RoutineNotificationsScreen(
                 .padding(padding)
                 .fillMaxSize()
         ) {
-            if (uiState.notifications.isEmpty() && !uiState.isLoading) {
+            if (!hasNotificationPermission) {
                 EmptyNotificationState(
-                    hasPermission = hasNotificationPermission,
+                    hasPermission = false,
                     onEnableClicked = askForPermission
+                )
+            }
+            else if (uiState.notifications.isEmpty() && !uiState.isLoading) {
+                EmptyNotificationState(
+                    hasPermission = true,
+                    onEnableClicked = {}
                 )
             } else {
                 RoutineNotificationsLazyList(
