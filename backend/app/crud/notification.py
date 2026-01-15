@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.exceptions import RequirementMismatchError
 from app.database.models import NotificationRule
 from app.schemas import NotificationRuleCreate, NotificationRuleUpdatePartial
+from app.services import NotificationScheduler
 
 
 async def get_user_notification_rules(
@@ -39,6 +40,7 @@ async def create_notification_rule(
     session.add(rule)
     await session.flush()
     await session.refresh(rule)
+    rule.next_run = NotificationScheduler.plan_next_run(rule, last_run=None)
     return rule
 
 
@@ -61,6 +63,7 @@ async def update_notification_rule(
         _ = TypeAdapter(NotificationRuleCreate).validate_python(rule, from_attributes=True)
     except ValidationError as exc:
         raise RequirementMismatchError(errors=exc.errors()) from exc
+    rule.next_run = NotificationScheduler.plan_next_run(rule, last_run=None)
 
     await session.flush()
     await session.refresh(rule)

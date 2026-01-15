@@ -1,4 +1,5 @@
 from app.core import exceptions
+from app.core.celery import celery
 from app.core.security import (
     create_access_token,
     create_refresh_token,
@@ -14,4 +15,5 @@ __all__ = [
     "create_access_token",
     "create_refresh_token",
     "exceptions",
+    "celery",
 ]

@@ -103,3 +103,18 @@ class SimpleRule(SimpleVariant, NotificationRuleInDB): ...
 NotificationRuleRead = Annotated[
     EveryNDaysRule | CustomRule | SimpleRule, Field(discriminator="frequency")
 ]
+
+
+class NotificationTask(BaseModel):
+    delivery_id: uuid.UUID
+    user_fcm_token: str
+    title: str
+    body: str
+
+
+class NotificationMetadata(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    rule_id: str
+    delivery_id: str
+    action_type: str = "DEFAULT"

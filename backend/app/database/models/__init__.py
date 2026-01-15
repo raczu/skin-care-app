@@ -1,10 +1,10 @@
 from app.database.models.base import Base
 from app.database.models.device import UserDevice
 from app.database.models.notification import (
+    NotificationDelivery,
     NotificationFrequency,
     NotificationRule,
     NotificationStatus,
-    ScheduledNotification,
 )
 from app.database.models.product import Product
 from app.database.models.routine import Routine, RoutineProduct, RoutineType
@@ -20,6 +20,6 @@ __all__ = [
     "RoutineType",
     "NotificationRule",
     "NotificationFrequency",
-    "ScheduledNotification",
+    "NotificationDelivery",
     "NotificationStatus",
 ]

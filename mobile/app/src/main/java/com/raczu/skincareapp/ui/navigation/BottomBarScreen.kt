@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class BottomBarScreen(
@@ -13,7 +14,7 @@ sealed class BottomBarScreen(
 ) {
     data object Routine: BottomBarScreen(
         route = "routine",
-        title = "Routine",
+        title = "Daily Journal",
         icon = Icons.Default.DateRange
     )
     data object Products: BottomBarScreen(
@@ -23,7 +24,12 @@ sealed class BottomBarScreen(
     )
     data object Notifications: BottomBarScreen(
         route = "notifications",
-        title = "Notifications",
+        title = "Reminders",
         icon = Icons.Default.Notifications
+    )
+    data object Profile: BottomBarScreen(
+        route="profile",
+        title="My Profile",
+        icon=Icons.Default.Person
     )
 }

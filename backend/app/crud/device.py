@@ -19,6 +19,12 @@ async def get_device_by_fcm_token(session: AsyncSession, fcm_token: str) -> User
     return device
 
 
+async def get_all_user_devices(session: AsyncSession) -> list[UserDevice]:
+    result = await session.execute(select(UserDevice))
+    devices = result.scalars().all()
+    return list(devices)
+
+
 async def create_user_device(
     session: AsyncSession, user_id: uuid.UUID, device_in: UserDeviceCreate
 ) -> UserDevice:

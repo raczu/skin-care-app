@@ -1,7 +1,7 @@
 import secrets
 from typing import Literal
 
-from pydantic import PostgresDsn, ValidationInfo, field_validator
+from pydantic import FilePath, PostgresDsn, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -20,11 +20,12 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str
     POSTGRES_PORT: int = 5432
     POSTGRES_DB: str
-    POSTGRES_DSN: PostgresDsn | None = None
+    ASYNC_POSTGRES_DSN: PostgresDsn | None = None
+    SYNC_POSTGRES_DSN: PostgresDsn | None = None
 
-    @field_validator("POSTGRES_DSN", mode="before")
+    @field_validator("ASYNC_POSTGRES_DSN", mode="before")
     @classmethod
-    def prepare_postgres_dsn(cls, v: str, info: ValidationInfo) -> PostgresDsn | str:
+    def prepare_async_postgres_dsn(cls, v: str, info: ValidationInfo) -> PostgresDsn | str:
         if isinstance(v, str):
             return v
         return PostgresDsn.build(
@@ -35,6 +36,25 @@ class Settings(BaseSettings):
             port=info.data["POSTGRES_PORT"],
             path=f"{info.data['POSTGRES_DB'] or ''}",
         )
+
+    @field_validator("SYNC_POSTGRES_DSN", mode="before")
+    @classmethod
+    def prepare_sync_postgres_dsn(cls, v: str, info: ValidationInfo) -> PostgresDsn | str:
+        if isinstance(v, str):
+            return v
+        return PostgresDsn.build(
+            scheme="postgresql+psycopg2",
+            username=info.data["POSTGRES_USER"],
+            password=info.data["POSTGRES_PASSWORD"],
+            host=info.data["POSTGRES_HOST"],
+            port=info.data["POSTGRES_PORT"],
+            path=f"{info.data['POSTGRES_DB'] or ''}",
+        )
+
+    FCM_CREDENTIALS_PATH: FilePath
+    NOTIFICATION_OFFSET_MINUTES: int = 15
+    CELERY_BROKER_URL: str = "redis://localhost:6379/0"
+    CELERY_RESULT_BACKEND: str = "redis://localhost:6379/0"
 
 
 settings = Settings()
