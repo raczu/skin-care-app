@@ -26,9 +26,9 @@ class NotificationRule(Base):
     time_of_day: Mapped[time] = mapped_column(Time(timezone=True), nullable=False)
     frequency: Mapped[NotificationFrequency] = mapped_column(String(20), nullable=False)
     every_n: Mapped[int] = mapped_column(nullable=True)
-    weekdays: Mapped[list[int]] = mapped_column(ARRAY(SmallInteger), nullable=True)
+    weekdays: Mapped[list[int] | None] = mapped_column(ARRAY(SmallInteger), nullable=True)
     enabled: Mapped[bool] = mapped_column(nullable=False, default=True)
-    next_run: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    next_run: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=datetime.now, onupdate=datetime.now
@@ -41,12 +41,20 @@ class NotificationStatus(StrEnum):
     FAILED = "FAILED"
 
 
-class ScheduledNotification(Base):
-    __tablename__ = "scheduled_notification"
+class NotificationDelivery(Base):
+    """
+    Represents a specific instance of a notification attempt.
+    Acts as audit log and a state holder for the workers.
+    """
+
+    __tablename__ = "notification_delivery"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     notification_rule_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("notification_rule.id"))
     scheduled_for: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    sent_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    status: Mapped[NotificationStatus] = mapped_column(String(20), nullable=False)
+    processed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    status: Mapped[NotificationStatus] = mapped_column(
+        String(20), nullable=False, default=NotificationStatus.PENDING
+    )
     payload: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    provider_message_id: Mapped[str] = mapped_column(String, nullable=True)

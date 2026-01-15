@@ -60,3 +60,23 @@ async def validation_exception_handler(
         },
         headers={"Content-Type": "application/problem+json"},
     )
+
+
+class BaseAppException(Exception):
+    """Base exception for internal application errors."""
+
+
+class NotificationError(BaseAppException):
+    """Exception raised for notification-related errors."""
+
+
+class SchedulerError(NotificationError):
+    """Raised when there is an issue calculating the next run date."""
+
+
+class InvalidFrequencyError(SchedulerError):
+    """Raised when an invalid notification frequency is encountered."""
+
+
+class ConfigurationError(SchedulerError):
+    """Raised when the notification rule configuration is invalid."""

@@ -15,23 +15,81 @@ services:
     env_file:
       - ".env"
 
+  redis:
+    image: docker.io/redis:8.4-alpine
+    networks:
+      - skin-care-app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis-data:/data
+
   backend:
-    image: skin-care-app:0.1
     build:
       context: ./backend
     networks:
-        - skin-care-app-network
+      - skin-care-app-network
     ports:
-        - "${SKIN_CARE_APP_BACKEND_PORT:-8000}:8000"
+      - "${SKIN_CARE_APP_BACKEND_PORT:-8000}:8000"
     depends_on:
       postgres:
         condition: service_healthy
-        restart: true
+    volumes:
+      - ./service-account.json:/run/secrets/service-account.json:ro
     env_file:
       - ".env"
 
+  worker-default:
+    build:
+      context: ./backend
+    command: celery -A app.core.celery worker -Q periodic,default --concurrency=2 --loglevel=INFO
+    networks:
+      - skin-care-app-network
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./service-account.json:/run/secrets/service-account.json:ro
+    env_file:
+      - ".env"
+
+  worker-notifications:
+    build:
+      context: ./backend
+    command: celery -A app.core.celery worker -Q notifications --concurrency=10 --loglevel=INFO
+    networks:
+      - skin-care-app-network
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./service-account.json:/run/secrets/service-account.json:ro
+    env_file:
+      - ".env"
+
+  celery-beat:
+    build:
+      context: ./backend
+    command: celery -A app.core.celery beat --loglevel=INFO
+    networks:
+      - skin-care-app-network
+    depends_on:
+      redis:
+        condition: service_healthy
+    env_file:
+      - ".env"
+
+
 volumes:
   postgres-data:
+  redis-data:
 
 networks:
     skin-care-app-network:

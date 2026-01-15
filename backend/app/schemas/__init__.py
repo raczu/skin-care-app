@@ -10,9 +10,11 @@ from app.schemas.notification import (
     CustomVariant,
     EveryNDaysRule,
     EveryNDaysVariant,
+    NotificationMetadata,
     NotificationRuleCreate,
     NotificationRuleRead,
     NotificationRuleUpdatePartial,
+    NotificationTask,
     SimpleRule,
     SimpleVariant,
 )
@@ -50,4 +52,6 @@ __all__ = [
     "CustomVariant",
     "EveryNDaysVariant",
     "SimpleVariant",
+    "NotificationMetadata",
+    "NotificationTask",
 ]
