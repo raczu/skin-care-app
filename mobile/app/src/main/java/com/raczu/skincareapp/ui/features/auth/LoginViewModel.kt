@@ -1,13 +1,16 @@
 package com.raczu.skincareapp.ui.features.auth
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.raczu.skincareapp.data.domain.validation.CompositeValidator
 import com.raczu.skincareapp.data.domain.validation.rules.EmailValidator
 import com.raczu.skincareapp.data.domain.validation.rules.RequiredValidator
 import com.raczu.skincareapp.data.repository.AuthRepository
+import com.raczu.skincareapp.data.repository.DeviceTokenRepository
 import com.raczu.skincareapp.ui.common.FormFieldState
-import com.raczu.skincareapp.ui.common.TextFieldState
 import com.raczu.skincareapp.ui.common.toUiErrorMessage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +26,8 @@ data class LoginUiState(
 )
 
 class LoginViewModel (
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val deviceTokenRepository: DeviceTokenRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
@@ -53,6 +57,20 @@ class LoginViewModel (
     }
     val fields = LoginFields(onChanged = onFieldChanged)
 
+    private fun syncFcmToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                viewModelScope.launch {
+                    deviceTokenRepository.saveCurrentToken(token)
+                        .onFailure {
+                            Log.d("LoginVM", "Failed to save device token: ${it.message}")
+                        }
+                }
+            }
+        })
+    }
+
     fun login() {
         if (!fields.validateAll()) return
 
@@ -64,6 +82,7 @@ class LoginViewModel (
             )
 
             result.onSuccess {
+                syncFcmToken()
                 _uiState.update {
                     it.copy(isLoading = false, isLoginSuccessful = true)
                 }

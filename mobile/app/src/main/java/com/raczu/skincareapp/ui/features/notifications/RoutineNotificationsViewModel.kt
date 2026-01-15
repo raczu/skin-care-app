@@ -1,9 +1,12 @@
 package com.raczu.skincareapp.ui.features.notifications
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.messaging.FirebaseMessaging
 import com.raczu.skincareapp.data.domain.models.notification.NotificationRule
 import com.raczu.skincareapp.data.domain.models.notification.NotificationRuleUpdate
+import com.raczu.skincareapp.data.repository.DeviceTokenRepository
 import com.raczu.skincareapp.data.repository.NotificationRuleRepository
 import com.raczu.skincareapp.ui.common.toUiErrorMessage
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +29,8 @@ data class RoutineNotificationsLoadState(
 )
 
 class RoutineNotificationsViewModel(
-    private val notificationRuleRepository: NotificationRuleRepository
+    private val notificationRuleRepository: NotificationRuleRepository,
+    private val deviceTokenRepository: DeviceTokenRepository
 ) : ViewModel() {
     private val _loadState = MutableStateFlow(RoutineNotificationsLoadState())
     val uiState: StateFlow<RoutineNotificationsUiState> = combine(
@@ -82,6 +86,20 @@ class RoutineNotificationsViewModel(
             result.onFailure { exception ->
                 _loadState.update {
                     it.copy(isLoading = false, error = exception.toUiErrorMessage())
+                }
+            }
+        }
+    }
+
+    fun onNotificationPermissionGranted() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                viewModelScope.launch {
+                    deviceTokenRepository.saveCurrentToken(token)
+                        .onFailure {
+                            Log.d("RoutineNotificationsVM", "Failed to save device token: ${it.message}")
+                        }
                 }
             }
         }

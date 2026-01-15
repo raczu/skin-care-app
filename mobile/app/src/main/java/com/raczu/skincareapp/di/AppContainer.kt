@@ -12,6 +12,7 @@ import com.raczu.skincareapp.data.remote.OffsetTimeAdapter
 import com.raczu.skincareapp.data.remote.RuntimeTypeAdapterFactory
 import com.raczu.skincareapp.data.remote.api.AuthApiService
 import com.raczu.skincareapp.data.remote.api.AuthInterceptor
+import com.raczu.skincareapp.data.remote.api.DeviceTokenApiService
 import com.raczu.skincareapp.data.remote.api.NotificationRuleApiService
 import com.raczu.skincareapp.data.remote.api.ProductApiService
 import com.raczu.skincareapp.data.remote.api.RoutineApiService
@@ -20,9 +21,11 @@ import com.raczu.skincareapp.data.remote.api.UserApiService
 import com.raczu.skincareapp.data.remote.dto.notification.NotificationRuleCreateRequest
 import com.raczu.skincareapp.data.remote.dto.notification.NotificationRuleResponse
 import com.raczu.skincareapp.data.repository.AuthRepository
+import com.raczu.skincareapp.data.repository.DeviceTokenRepository
 import com.raczu.skincareapp.data.repository.NotificationRuleRepository
 import com.raczu.skincareapp.data.repository.ProductRepository
 import com.raczu.skincareapp.data.repository.RemoteAuthRepository
+import com.raczu.skincareapp.data.repository.RemoteDeviceTokenRepository
 import com.raczu.skincareapp.data.repository.RemoteNotificationRuleRepository
 import com.raczu.skincareapp.data.repository.RemoteProductRepository
 import com.raczu.skincareapp.data.repository.RemoteRoutineRepository
@@ -135,5 +138,13 @@ class AppContainer(private val context: Context) {
 
     val routineNotificationRepository: NotificationRuleRepository by lazy {
         RemoteNotificationRuleRepository(notificationRuleApiService)
+    }
+
+    private val deviceTokenApiService: DeviceTokenApiService by lazy {
+        retrofit.value.create(DeviceTokenApiService::class.java)
+    }
+
+    val deviceTokenRepository: DeviceTokenRepository by lazy {
+        RemoteDeviceTokenRepository(deviceTokenApiService)
     }
 }

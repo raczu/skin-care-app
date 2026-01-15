@@ -1,5 +1,10 @@
 package com.raczu.skincareapp.ui.features.notifications
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +25,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,14 +44,18 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.raczu.skincareapp.data.domain.models.notification.NotificationFrequency
@@ -77,6 +88,31 @@ fun RoutineNotificationsScreen(
 
     val pullToRefreshState = rememberPullToRefreshState()
 
+    val context = LocalContext.current
+    var hasNotificationPermission by remember {
+        mutableStateOf(
+            if (Build.VERSION.SDK_INT >= 33) {
+                ContextCompat.checkSelfPermission(
+                    context, Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            } else true
+        )
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            hasNotificationPermission = isGranted
+            if (isGranted) viewModel.onNotificationPermissionGranted()
+        }
+    )
+
+    val askForPermission = {
+        if (Build.VERSION.SDK_INT >= 33) {
+            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
@@ -87,7 +123,10 @@ fun RoutineNotificationsScreen(
         },
         bottomBar = {
             BottomAddFloatingButton(
-                onClick = onNavigateToNotificationAdd,
+                onClick = {
+                    if (hasNotificationPermission) onNavigateToNotificationAdd()
+                    else askForPermission()
+                },
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
@@ -104,7 +143,10 @@ fun RoutineNotificationsScreen(
                 .fillMaxSize()
         ) {
             if (uiState.notifications.isEmpty() && !uiState.isLoading) {
-                EmptyRoutineNotificationsMessage()
+                EmptyNotificationState(
+                    hasPermission = hasNotificationPermission,
+                    onEnableClicked = askForPermission
+                )
             } else {
                 RoutineNotificationsLazyList(
                     notifications = uiState.notifications,
@@ -276,7 +318,9 @@ fun NotificationRuleItemPreview() {
 }
 
 @Composable
-fun EmptyRoutineNotificationsMessage(
+fun EmptyNotificationState(
+    hasPermission: Boolean,
+    onEnableClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -287,31 +331,47 @@ fun EmptyRoutineNotificationsMessage(
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            Icons.Default.Info,
+            if (hasPermission) Icons.Default.Info else Icons.Default.Warning,
             contentDescription = null,
             modifier = Modifier.size(64.dp),
             tint = MaterialTheme.colorScheme.surfaceVariant
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "No reminders set yet.",
+            text = if (hasPermission) "No reminders set yet." else "Notifications disabled.",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
+
+        val subtext = if (hasPermission) {
+            "Set up notification rules to stay consistent with your skincare routine and see better results!"
+        } else {
+            "To stay consistent with your routine, please enable notifications first."
+        }
+
         Text(
-            text = "Set up notification rules to stay consistent with " +
-                    "your skincare routine and see better results!",
+            text = subtext,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.outline,
             textAlign = TextAlign.Center
         )
+
+        if (!hasPermission) {
+            Spacer(modifier = Modifier.height(24.dp))
+            Button(
+                onClick = onEnableClicked,
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Text("Enable Notifications")
+            }
+        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun EmptyNotificationRuleListPreview() {
-    EmptyRoutineNotificationsMessage()
+    EmptyNotificationState(hasPermission = false, onEnableClicked = { })
 }
 

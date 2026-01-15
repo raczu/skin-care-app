@@ -10,7 +10,6 @@ import com.raczu.skincareapp.data.domain.validation.rules.PasswordValidator
 import com.raczu.skincareapp.data.domain.validation.rules.RequiredValidator
 import com.raczu.skincareapp.data.repository.UserRepository
 import com.raczu.skincareapp.ui.common.FormFieldState
-import com.raczu.skincareapp.ui.common.TextFieldState
 import com.raczu.skincareapp.ui.common.toUiErrorMessage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

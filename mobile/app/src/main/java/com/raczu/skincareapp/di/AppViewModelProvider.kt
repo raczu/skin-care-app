@@ -23,43 +23,32 @@ import com.raczu.skincareapp.ui.navigation.TopBarScreen
 object AppViewModelProvider {
     val factory = viewModelFactory {
         initializer {
-            MainViewModel(
-                skinCareApplication().container.tokenManager
-            )
+            MainViewModel(appContainer.tokenManager)
         }
 
         initializer {
             LoginViewModel(
-                skinCareApplication().container.authRepository
+                appContainer.authRepository,
+                appContainer.deviceTokenRepository
             )
         }
 
         initializer {
-            RegisterViewModel(
-                skinCareApplication().container.userRepository
-            )
+            RegisterViewModel(appContainer.userRepository)
         }
 
         initializer {
-            ProductsViewModel(
-                skinCareApplication().container.productRepository
-            )
+            ProductsViewModel(appContainer.productRepository)
         }
 
         initializer {
             val savedStateHandle = this.createSavedStateHandle()
             val productId: String? = savedStateHandle[TopBarScreen.EditProduct.args]
-
-            ProductFormViewModel(
-                skinCareApplication().container.productRepository,
-                productId
-            )
+            ProductFormViewModel(appContainer.productRepository, productId)
         }
 
         initializer {
-            RoutineViewModel(
-                skinCareApplication().container.routineRepository
-            )
+            RoutineViewModel(appContainer.routineRepository)
         }
 
         initializer {
@@ -67,54 +56,50 @@ object AppViewModelProvider {
             val routineId: String = checkNotNull(
                 savedStateHandle[TopBarScreen.RoutineDetails.args]
             )
-
-            RoutineDetailsViewModel(
-                skinCareApplication().container.routineRepository,
-                routineId
-            )
+            RoutineDetailsViewModel(appContainer.routineRepository, routineId)
         }
 
         initializer {
             val savedStateHandle = this.createSavedStateHandle()
             val productId: String? = savedStateHandle[TopBarScreen.EditRoutine.args]
-
             RoutineFormViewModel(
-                skinCareApplication().container.routineRepository,
-                skinCareApplication().container.productRepository,
+                appContainer.routineRepository,
+                appContainer.productRepository,
                 productId
             )
         }
 
         initializer {
             RoutineNotificationsViewModel(
-                skinCareApplication().container.routineNotificationRepository
+                appContainer.routineNotificationRepository,
+                appContainer.deviceTokenRepository
             )
         }
 
         initializer {
             val savedStateHandle = this.createSavedStateHandle()
             val ruleId: String? = savedStateHandle[TopBarScreen.EditRoutineNotificationRule.args]
-
             RoutineNotificationFormViewModel(
-                skinCareApplication().container.routineNotificationRepository,
+                appContainer.routineNotificationRepository,
                 ruleId
             )
         }
 
         initializer {
             ProfileViewModel(
-                skinCareApplication().container.userRepository,
-                skinCareApplication().container.tokenManager
+                appContainer.userRepository,
+                appContainer.tokenManager
             )
         }
 
         initializer {
-            EditProfileViewModel(
-                skinCareApplication().container.userRepository
-            )
+            EditProfileViewModel(appContainer.userRepository)
         }
     }
 }
 
 fun CreationExtras.skinCareApplication(): SkinCareApplication =
     (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as SkinCareApplication)
+
+val CreationExtras.appContainer: AppContainer
+    get() = skinCareApplication().container
