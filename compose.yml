@@ -28,7 +28,6 @@ services:
       - redis-data:/data
 
   backend:
-    image: skin-care-app:0.1
     build:
       context: ./backend
     networks:
@@ -38,27 +37,55 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-        restart: true
     volumes:
       - ./service-account.json:/run/secrets/service-account.json:ro
     env_file:
       - ".env"
 
-  worker:
-    image: skin-care-app:0.1
+  worker-default:
     build:
       context: ./backend
-    command: celery -A app.core.celery worker --concurrency=2 --loglevel=INFO
+    command: celery -A app.core.celery worker -Q periodic,default --concurrency=2 --loglevel=INFO
     networks:
       - skin-care-app-network
     depends_on:
       redis:
         condition: service_healthy
-        restart: true
+      postgres:
+        condition: service_healthy
     volumes:
       - ./service-account.json:/run/secrets/service-account.json:ro
     env_file:
       - ".env"
+
+  worker-notifications:
+    build:
+      context: ./backend
+    command: celery -A app.core.celery worker -Q notifications --concurrency=10 --loglevel=INFO
+    networks:
+      - skin-care-app-network
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./service-account.json:/run/secrets/service-account.json:ro
+    env_file:
+      - ".env"
+
+  celery-beat:
+    build:
+      context: ./backend
+    command: celery -A app.core.celery beat --loglevel=INFO
+    networks:
+      - skin-care-app-network
+    depends_on:
+      redis:
+        condition: service_healthy
+    env_file:
+      - ".env"
+
 
 volumes:
   postgres-data:
