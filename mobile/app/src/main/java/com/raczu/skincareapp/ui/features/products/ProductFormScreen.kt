@@ -128,21 +128,21 @@ fun ProductFormContent(
         OutlinedTextField(
             value = fields.brand.value,
             onValueChange = { fields.brand.onValueChange(it) },
-            label = { Text("Brand") },
+            label = { Text("Brand (Optional)") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled
         )
         OutlinedTextField(
             value = fields.purpose.value,
             onValueChange = { fields.purpose.onValueChange(it) },
-            label = { Text("Purpose") },
+            label = { Text("Purpose (Optional)") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled
         )
         OutlinedTextField(
             value = fields.description.value,
             onValueChange = { fields.description.onValueChange(it) },
-            label = { Text("Description") },
+            label = { Text("Description (Optional)") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             minLines = 3
