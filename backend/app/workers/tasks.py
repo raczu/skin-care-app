@@ -136,7 +136,6 @@ class NotificationDBTask(Task):
 @celery.task(
     name="send_fcm_notification",
     base=NotificationDBTask,
-    bind=True,
     max_retries=3,
     default_retry_delay=60,
     autoretry_for=(FirebaseError,),
