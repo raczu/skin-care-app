@@ -1,8 +1,8 @@
 """initdb
 
-Revision ID: 738692b4aac9
+Revision ID: d530aa712942
 Revises:
-Create Date: 2026-01-15 23:09:42.102764
+Create Date: 2026-01-16 17:58:36.239797
 
 """
 
@@ -13,7 +13,7 @@ from alembic import op
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = "738692b4aac9"
+revision: str = "d530aa712942"
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -100,15 +100,14 @@ def upgrade() -> None:
     op.create_table(
         "notification_delivery",
         sa.Column("id", sa.UUID(), nullable=False),
-        sa.Column("notification_rule_id", sa.UUID(), nullable=False),
+        sa.Column("notification_rule_id", sa.UUID(), nullable=True),
         sa.Column("scheduled_for", sa.DateTime(timezone=True), nullable=False),
         sa.Column("processed_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("status", sa.String(length=20), nullable=False),
         sa.Column("payload", postgresql.JSONB(astext_type=sa.Text()), nullable=False),
         sa.Column("provider_message_id", sa.String(), nullable=True),
         sa.ForeignKeyConstraint(
-            ["notification_rule_id"],
-            ["notification_rule.id"],
+            ["notification_rule_id"], ["notification_rule.id"], ondelete="SET NULL"
         ),
         sa.PrimaryKeyConstraint("id"),
     )

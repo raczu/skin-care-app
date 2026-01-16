@@ -50,7 +50,9 @@ class NotificationDelivery(Base):
     __tablename__ = "notification_delivery"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    notification_rule_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("notification_rule.id"))
+    notification_rule_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("notification_rule.id", ondelete="SET NULL"), nullable=True
+    )
     scheduled_for: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     processed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     status: Mapped[NotificationStatus] = mapped_column(

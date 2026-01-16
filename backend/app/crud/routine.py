@@ -63,11 +63,13 @@ async def update_routine(
     session: AsyncSession, routine: Routine, routine_in: RoutineUpdatePartial
 ) -> Routine:
     data = routine_in.model_dump(exclude_unset=True)
+    if "product_ids" in data:
+        product_ids = data.pop("product_ids")
+        products = await get_user_products_by_ids(session, routine.user_id, product_ids)
+        routine.products = products
+
     for field, value in data.items():
         setattr(routine, field, value)
-    if routine_in.product_ids:
-        products = await get_user_products_by_ids(session, routine.user_id, routine_in.product_ids)
-        routine.products = products
 
     await session.flush()
     await session.refresh(routine)

@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime, timezone
 from typing import Self
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from app.database.models.routine import RoutineType
 from app.schemas.common import PaginationParams
@@ -45,6 +45,13 @@ class RoutineUpdatePartial(RoutineBase):
     type: RoutineType | None = None
     product_ids: list[uuid.UUID] | None = None
     performed_at: datetime | None = None
+
+    @field_validator("product_ids")
+    @classmethod
+    def _validate_products(cls, v: list[uuid.UUID] | None) -> list[uuid.UUID] | None:
+        if v is not None and len(v) == 0:
+            raise ValueError("Routine must have at least one product")
+        return v
 
 
 class RoutineInDB(RoutineBase):
