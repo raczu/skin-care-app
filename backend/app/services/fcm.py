@@ -16,7 +16,7 @@ class FCMService:
     @classmethod
     def _ensure_initialized(cls) -> None:
         if not cls._initialized:
-            cred = credentials.Certificate(settings.FCM_SERVICE_ACCOUNT_JSON)
+            cred = credentials.Certificate(settings.FCM_CREDENTIALS_PATH)
             try:
                 firebase_admin.get_app()
             except ValueError:

@@ -83,6 +83,8 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+    volumes:
+      - ./service-account.json:/run/secrets/service-account.json:ro
     env_file:
       - ".env"
 
