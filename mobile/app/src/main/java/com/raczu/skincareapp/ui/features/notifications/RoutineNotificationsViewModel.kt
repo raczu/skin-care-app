@@ -68,7 +68,19 @@ class RoutineNotificationsViewModel(
 
     fun toggleNotification(ruleId: String, isEnabled: Boolean) {
         viewModelScope.launch {
-            val update = NotificationRuleUpdate(enabled = isEnabled)
+            val rule = notificationRuleRepository.notifications.value.find { it.id == ruleId }
+            if (rule == null) {
+                _loadState.update {
+                    it.copy(error = "Notification rule not found")
+                }
+                return@launch
+            }
+
+            val update = NotificationRuleUpdate(
+                everyN = if (rule is NotificationRule.EveryNDays) rule.everyN else null,
+                weekdays = if (rule is NotificationRule.Custom) rule.weekdays else null,
+                enabled = isEnabled
+            )
             val result = notificationRuleRepository.updateNotificationRule(
                 ruleId, update
             )

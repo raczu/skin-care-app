@@ -33,6 +33,7 @@ class AppMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         remoteMessage.notification?.let {
+            Log.d("AppMessagingService", "Message notification title: ${it.title}")
             appNotificationManager.showNotification(it.title, it.body)
         }
     }
